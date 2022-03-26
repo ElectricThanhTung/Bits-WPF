@@ -315,7 +315,7 @@ namespace Bits {
             Stack<StringBuilder> stack = new Stack<StringBuilder>();
             StringBuilder exp = Normalization(new StringBuilder(expression));
             temp = SeparationOfExpressions(exp);
-            ConvertHexToInt(temp);
+            ConvertAllToInt(temp);
             temp = Postfix(temp);
 
             for(int i = 0; i < temp.Count; i++) {
@@ -484,10 +484,13 @@ namespace Bits {
             return ret;
         }
 
-        private static void ConvertHexToInt(List<StringBuilder> list) {
+        private static void ConvertAllToInt(List<StringBuilder> list) {
             for(int i = 0; i < list.Count; i++) {
-                if(list[i].Length > 2 && list[i][0] == '0' && (list[i][1] == 'x' || list[i][1] == 'X'))
+                int length = list[i].Length;
+                if(length > 2 && list[i][0] == '0' && (list[i][1] == 'x' || list[i][1] == 'X'))
                     list[i] = new StringBuilder().Append(HexToInt(list[i].ToString()));
+                else if(length == 3 && list[i][0] == '\'' && list[i][2] == '\'')
+                    list[i] = new StringBuilder().Append((int)list[i][1]);
             }
         }
 
