@@ -33,6 +33,9 @@ namespace Bits {
         override protected void OnContentRendered(EventArgs e) {
             if(!WindowShown) {
                 WindowShown = true;
+                expression_textbox.MaxWidth = expression_textbox.ActualWidth;
+                interger_textbox.MaxWidth = interger_textbox.ActualWidth;
+                hex_textbox.MaxWidth = hex_textbox.ActualWidth;
                 this.InvalidateMeasure();
             }
             base.OnContentRendered(e);

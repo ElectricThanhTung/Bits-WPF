@@ -311,6 +311,7 @@
                         SelectionBrush="Blue"
                         FontSize="14"
                         VerticalContentAlignment="Center"
+                        IsReadOnly="True"
                         BorderBrush="DimGray">
                     </TextBox>
                     <TextBlock Text="Hexadecimal result (HEX):"
@@ -326,6 +327,7 @@
                         SelectionBrush="Blue"
                         FontSize="14"
                         VerticalContentAlignment="Center"
+                        IsReadOnly="True"
                         BorderBrush="DimGray">
                     </TextBox>
                     <TextBlock Text="Information"
