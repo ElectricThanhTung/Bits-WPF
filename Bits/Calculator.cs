@@ -487,10 +487,23 @@ namespace Bits {
         private static void ConvertAllToInt(List<StringBuilder> list) {
             for(int i = 0; i < list.Count; i++) {
                 int length = list[i].Length;
-                if(length > 2 && list[i][0] == '0' && (list[i][1] == 'x' || list[i][1] == 'X'))
-                    list[i] = new StringBuilder().Append(HexToInt(list[i].ToString()));
-                else if(length == 3 && list[i][0] == '\'' && list[i][2] == '\'')
-                    list[i] = new StringBuilder().Append((int)list[i][1]);
+                if(length > 2) {
+                    if(list[i][0] == '0' && (list[i][1] == 'x' || list[i][1] == 'X'))
+                        list[i] = new StringBuilder().Append(HexToInt(list[i].ToString()));
+                    else if(length == 3 && list[i][0] == '\'' && list[i][2] == '\'')
+                        list[i] = new StringBuilder().Append((int)list[i][1]);
+                    else if(list[i][0] == '0' && (list[i][1] == 'b' || list[i][1] == 'B')) {
+                        ulong value = 0;
+                        for(int j = 2; j < length; j++) {
+                            value <<= 1;
+                            if(list[i][j] == '1')
+                                value |= 1;
+                            else if(list[i][j] != '0')
+                                throw new Exception();
+                        }
+                        list[i] = new StringBuilder().Append(value.ToString());
+                    }
+                }
             }
         }
 
