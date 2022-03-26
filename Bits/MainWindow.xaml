@@ -270,15 +270,21 @@
                         </Style>
                     </TextBlock.Resources>
                 </TextBlock>
-                <StackPanel Margin="5 0 5 2"
-                    Orientation="Horizontal">
-                    <TextBlock Text="Expression:"></TextBlock>
-                    <TextBlock Text="0"
+                <Grid Margin="5 0 5 2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Expression:"></TextBlock>
+                    <TextBox Grid.Column="1" Text="0"
                         x:Name="result_textblock"
-                        Margin="5 0 0 0"
+                        Margin="5 0 40 0"
+                        BorderThickness="0"
+                        SelectionChanged="result_textblock_SelectionChanged"
+                        IsReadOnly="True"
                         Foreground="Blue">
-                    </TextBlock>
-                </StackPanel>
+                    </TextBox>
+                </Grid>
                 <TextBox Height="24"
                     x:Name="expression_textbox"
                     SelectionBrush="Blue"

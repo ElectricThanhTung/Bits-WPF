@@ -36,6 +36,7 @@ namespace Bits {
                 expression_textbox.MaxWidth = expression_textbox.ActualWidth;
                 interger_textbox.MaxWidth = interger_textbox.ActualWidth;
                 hex_textbox.MaxWidth = hex_textbox.ActualWidth;
+                result_textblock.MaxWidth = result_textblock.ActualWidth;
                 this.InvalidateMeasure();
             }
             base.OnContentRendered(e);
@@ -106,6 +107,7 @@ namespace Bits {
                 interger &= 0xFFFFFFFFFFFFFFFF;
                 ulong uint64 = (ulong)interger;
                 hex_textbox.Text = "0x" + Calculator.IntToHex(uint64);
+                result_textblock.Cursor = Cursors.IBeam;
                 result_textblock.Foreground = Brushes.Blue;
                 result_textblock.Text = ((value % 1) == 0) ? interger_textbox.Text : value.ToString();
                 if(updateExpression) {
@@ -149,6 +151,7 @@ namespace Bits {
                 catch {
                     try {
                         this.Dispatcher.BeginInvoke(() => {
+                            result_textblock.Cursor = Cursors.Arrow;
                             result_textblock.Text = "Invalid expression";
                             result_textblock.Foreground = Brushes.Red;
                         });
@@ -177,6 +180,12 @@ namespace Bits {
 
                 }
             }
+        }
+
+        private void result_textblock_SelectionChanged(object sender, RoutedEventArgs e) {
+            if(result_textblock.Foreground != Brushes.Blue)
+                if(result_textblock.SelectionLength != 0)
+                    result_textblock.SelectionLength = 0;
         }
     }
 }
