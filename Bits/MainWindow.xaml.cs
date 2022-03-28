@@ -4,6 +4,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Threading;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Bits {
     public partial class MainWindow : Window {
@@ -138,11 +140,41 @@ namespace Bits {
                 }
                 catch {
                     try {
-                        this.Dispatcher.BeginInvoke(() => {
-                            result_textblock.Cursor = Cursors.Arrow;
-                            result_textblock.Text = "Invalid expression";
-                            result_textblock.Foreground = Brushes.Red;
-                        });
+                        StringBuilder expression = new StringBuilder(oldStr);
+                        StringBuilder result = new StringBuilder();
+                        Match match;
+                        if((match = Regex.Match(expression.ToString(), @"(\A|\s+)""(\w|\s)+""(\z|\s+)")) != null && match.Value != "") {
+                            byte[] bytes = UTF8Encoding.UTF8.GetBytes(expression.ToString().Substring(1, expression.Length - 2));
+                            for(int i = 0; i < bytes.Length - 1; i++) {
+                                result.Append(bytes[i]);
+                                result.Append(", ");
+                            }
+                            result.Append(bytes[bytes.Length - 1]);
+                        }
+                        else if((match = Regex.Match(expression.ToString(), @"(\A|\s+)""(\w|\s)+"".ToUpper(\(\))*(\z|\s+)")) != null && match.Value != "") {
+                            string temp = expression.ToString();
+                            temp = temp.Substring(0, temp.IndexOf('.'));
+                            result = new StringBuilder(temp.ToUpper());
+                        }
+                        else if((match = Regex.Match(expression.ToString(), @"(\A|\s+)""(\w|\s)+"".ToLower(\(\))*(\z|\s+)")) != null && match.Value != "") {
+                            string temp = expression.ToString();
+                            temp = temp.Substring(0, temp.IndexOf('.'));
+                            result = new StringBuilder(temp.ToLower());
+                        }
+                        if(result.Length > 0) {
+                            this.Dispatcher.BeginInvoke(() => {
+                                result_textblock.Cursor = Cursors.IBeam;
+                                result_textblock.Foreground = Brushes.Blue;
+                                result_textblock.Text = result.ToString();
+                            });
+                        }
+                        else {
+                            this.Dispatcher.BeginInvoke(() => {
+                                result_textblock.Cursor = Cursors.Arrow;
+                                result_textblock.Text = "Invalid expression";
+                                result_textblock.Foreground = Brushes.Red;
+                            });
+                        }
                     }
                     catch {
 

@@ -404,6 +404,13 @@ namespace Bits {
         }
 
         private static StringBuilder Normalization(StringBuilder expression) {
+            foreach(Match match in Regex.Matches(expression.ToString(), @"""(\w|\s)+"".[lL]ength(\(\))*"))
+                expression = expression.Replace(match.Value, (match.Value.Length - 9).ToString());
+            foreach(Match match in Regex.Matches(expression.ToString(), @"""(\w|\s)+"".[sS]ize(\(\))*")) {
+                string temp = match.Value.Substring(1, match.Value.Length - 7);
+                expression = expression.Replace(match.Value, UTF8Encoding.UTF8.GetBytes(temp).Length.ToString());
+            }
+
             expression = expression.Replace(" ", "");
             expression = expression.Replace("++", "+");
             expression = expression.Replace("--", "+");
