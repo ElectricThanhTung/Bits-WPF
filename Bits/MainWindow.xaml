@@ -234,6 +234,38 @@
                                 </Setter.Value>
                             </Setter>
                             <Style.Triggers>
+                                <EventTrigger RoutedEvent="MouseDown">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                                To="1.05"
+                                                Duration="00:00:00.05">
+                                            </DoubleAnimation>
+                                            <DoubleAnimation
+                                                Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                                To="1.05"
+                                                Duration="00:00:00.05">
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                                <EventTrigger RoutedEvent="MouseUp">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                                To="1.1"
+                                                Duration="00:00:00.05">
+                                            </DoubleAnimation>
+                                            <DoubleAnimation
+                                                Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                                To="1.1"
+                                                Duration="00:00:00.05">
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
                                 <EventTrigger RoutedEvent="MouseEnter">
                                     <BeginStoryboard>
                                         <Storyboard>
@@ -356,6 +388,38 @@
                                     </Setter.Value>
                                 </Setter>
                                 <Style.Triggers>
+                                    <EventTrigger RoutedEvent="MouseDown">
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation
+                                                Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                                To="1.05"
+                                                Duration="00:00:00.05">
+                                                </DoubleAnimation>
+                                                <DoubleAnimation
+                                                Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                                To="1.05"
+                                                Duration="00:00:00.05">
+                                                </DoubleAnimation>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                    <EventTrigger RoutedEvent="MouseUp">
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation
+                                                Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                                To="1.1"
+                                                Duration="00:00:00.05">
+                                                </DoubleAnimation>
+                                                <DoubleAnimation
+                                                Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                                To="1.1"
+                                                Duration="00:00:00.05">
+                                                </DoubleAnimation>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
                                     <EventTrigger RoutedEvent="MouseEnter">
                                         <BeginStoryboard>
                                             <Storyboard>
