@@ -29,6 +29,7 @@
                 <RowDefinition></RowDefinition>
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal"
+                Grid.Row="0"
                 VerticalAlignment="Center"
                 HorizontalAlignment="Left">
                 <Image Source="/Bits;component/Images/bits_icon.png"
@@ -121,15 +122,15 @@
                     <StackPanel HorizontalAlignment="Center" Margin="5 0 5 0">
                         <StackPanel Orientation="Horizontal" Margin="0 0 0 2">
                             <TextBlock Text="Byte 3:"
-                               FontSize="11"
-                               Padding="0">
+                                FontSize="11"
+                                Padding="0">
                             </TextBlock>
                             <TextBlock Text="00000000"
-                               x:Name="binary_text_3"
-                               Padding="0"
-                               FontSize="11"
-                               Margin="5 0 0 0"
-                               Foreground="Green">
+                                x:Name="binary_text_3"
+                                Padding="0"
+                                FontSize="11"
+                                Margin="5 0 0 0"
+                                Foreground="Green">
                             </TextBlock>
                         </StackPanel>
                         <local:Register x:Name="reg3"
@@ -144,15 +145,15 @@
                     <StackPanel HorizontalAlignment="Center" Margin="5 0 5 0">
                         <StackPanel Orientation="Horizontal" Margin="0 0 0 2">
                             <TextBlock Text="Byte 2:"
-                               FontSize="11"
-                               Padding="0">
+                                FontSize="11"
+                                Padding="0">
                             </TextBlock>
                             <TextBlock Text="00000000"
-                               x:Name="binary_text_2"
-                               Padding="0"
-                               FontSize="11"
-                               Margin="5 0 0 0"
-                               Foreground="Green">
+                                x:Name="binary_text_2"
+                                Padding="0"
+                                FontSize="11"
+                                Margin="5 0 0 0"
+                                Foreground="Green">
                             </TextBlock>
                         </StackPanel>
                         <local:Register x:Name="reg2"
@@ -169,15 +170,15 @@
                     <StackPanel HorizontalAlignment="Center" Margin="5 0 5 0">
                         <StackPanel Orientation="Horizontal" Margin="0 0 0 2">
                             <TextBlock Text="Byte 1:"
-                               FontSize="11"
-                               Padding="0">
+                                FontSize="11"
+                                Padding="0">
                             </TextBlock>
                             <TextBlock Text="00000000"
-                               x:Name="binary_text_1"
-                               Padding="0"
-                               FontSize="11"
-                               Margin="5 0 0 0"
-                               Foreground="Green">
+                                x:Name="binary_text_1"
+                                Padding="0"
+                                FontSize="11"
+                                Margin="5 0 0 0"
+                                Foreground="Green">
                             </TextBlock>
                         </StackPanel>
                         <local:Register x:Name="reg1"
@@ -192,15 +193,15 @@
                     <StackPanel HorizontalAlignment="Center" Margin="5 0 5 0">
                         <StackPanel Orientation="Horizontal" Margin="0 0 0 2">
                             <TextBlock Text="Byte 0:"
-                               FontSize="11"
-                               Padding="0">
+                                FontSize="11"
+                                Padding="0">
                             </TextBlock>
                             <TextBlock Text="00000000"
-                               x:Name="binary_text_0"
-                               Padding="0"
-                               FontSize="11"
-                               Margin="5 0 0 0"
-                               Foreground="Green">
+                                x:Name="binary_text_0"
+                                Padding="0"
+                                FontSize="11"
+                                Margin="5 0 0 0"
+                                Foreground="Green">
                             </TextBlock>
                         </StackPanel>
                         <local:Register x:Name="reg0"
@@ -237,15 +238,13 @@
                                 <EventTrigger RoutedEvent="MouseDown">
                                     <BeginStoryboard>
                                         <Storyboard>
-                                            <DoubleAnimation
+                                            <DoubleAnimation Duration="00:00:00.05"
                                                 Storyboard.TargetProperty="RenderTransform.ScaleX"
-                                                To="1.05"
-                                                Duration="00:00:00.05">
+                                                To="1.05">
                                             </DoubleAnimation>
-                                            <DoubleAnimation
+                                            <DoubleAnimation Duration="00:00:00.05"
                                                 Storyboard.TargetProperty="RenderTransform.ScaleY"
-                                                To="1.05"
-                                                Duration="00:00:00.05">
+                                                To="1.05">
                                             </DoubleAnimation>
                                         </Storyboard>
                                     </BeginStoryboard>
@@ -253,15 +252,13 @@
                                 <EventTrigger RoutedEvent="MouseUp">
                                     <BeginStoryboard>
                                         <Storyboard>
-                                            <DoubleAnimation
+                                            <DoubleAnimation Duration="00:00:00.05"
                                                 Storyboard.TargetProperty="RenderTransform.ScaleX"
-                                                To="1.1"
-                                                Duration="00:00:00.05">
+                                                To="1.1">
                                             </DoubleAnimation>
-                                            <DoubleAnimation
+                                            <DoubleAnimation Duration="00:00:00.05"
                                                 Storyboard.TargetProperty="RenderTransform.ScaleY"
-                                                To="1.1"
-                                                Duration="00:00:00.05">
+                                                To="1.1">
                                             </DoubleAnimation>
                                         </Storyboard>
                                     </BeginStoryboard>
@@ -269,15 +266,13 @@
                                 <EventTrigger RoutedEvent="MouseEnter">
                                     <BeginStoryboard>
                                         <Storyboard>
-                                            <DoubleAnimation
+                                            <DoubleAnimation Duration="00:00:00.10"
                                                 Storyboard.TargetProperty="RenderTransform.ScaleX"
-                                                To="1.1"
-                                                Duration="00:00:00.10">
+                                                To="1.1">
                                             </DoubleAnimation>
-                                            <DoubleAnimation
+                                            <DoubleAnimation Duration="00:00:00.10"
                                                 Storyboard.TargetProperty="RenderTransform.ScaleY"
-                                                To="1.1"
-                                                Duration="00:00:00.10">
+                                                To="1.1">
                                             </DoubleAnimation>
                                         </Storyboard>
                                     </BeginStoryboard>
@@ -285,15 +280,13 @@
                                 <EventTrigger RoutedEvent="MouseLeave">
                                     <BeginStoryboard>
                                         <Storyboard>
-                                            <DoubleAnimation
+                                            <DoubleAnimation Duration="00:00:00.20"
                                                 Storyboard.TargetProperty="RenderTransform.ScaleX"
-                                                To="1"
-                                                Duration="00:00:00.20">
+                                                To="1">
                                             </DoubleAnimation>
-                                            <DoubleAnimation
+                                            <DoubleAnimation Duration="00:00:00.20"
                                                 Storyboard.TargetProperty="RenderTransform.ScaleY"
-                                                To="1"
-                                                Duration="00:00:00.20">
+                                                To="1">
                                             </DoubleAnimation>
                                         </Storyboard>
                                     </BeginStoryboard>
@@ -391,15 +384,13 @@
                                     <EventTrigger RoutedEvent="MouseDown">
                                         <BeginStoryboard>
                                             <Storyboard>
-                                                <DoubleAnimation
-                                                Storyboard.TargetProperty="RenderTransform.ScaleX"
-                                                To="1.05"
-                                                Duration="00:00:00.05">
+                                                <DoubleAnimation Duration="00:00:00.05"
+                                                    Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                                    To="1.05">
                                                 </DoubleAnimation>
-                                                <DoubleAnimation
-                                                Storyboard.TargetProperty="RenderTransform.ScaleY"
-                                                To="1.05"
-                                                Duration="00:00:00.05">
+                                                <DoubleAnimation Duration="00:00:00.05"
+                                                    Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                                    To="1.05">
                                                 </DoubleAnimation>
                                             </Storyboard>
                                         </BeginStoryboard>
@@ -407,15 +398,13 @@
                                     <EventTrigger RoutedEvent="MouseUp">
                                         <BeginStoryboard>
                                             <Storyboard>
-                                                <DoubleAnimation
-                                                Storyboard.TargetProperty="RenderTransform.ScaleX"
-                                                To="1.1"
-                                                Duration="00:00:00.05">
+                                                <DoubleAnimation Duration="00:00:00.05"
+                                                    Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                                    To="1.1">
                                                 </DoubleAnimation>
-                                                <DoubleAnimation
-                                                Storyboard.TargetProperty="RenderTransform.ScaleY"
-                                                To="1.1"
-                                                Duration="00:00:00.05">
+                                                <DoubleAnimation Duration="00:00:00.05"
+                                                    Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                                    To="1.1">
                                                 </DoubleAnimation>
                                             </Storyboard>
                                         </BeginStoryboard>
@@ -423,15 +412,13 @@
                                     <EventTrigger RoutedEvent="MouseEnter">
                                         <BeginStoryboard>
                                             <Storyboard>
-                                                <DoubleAnimation
-                                                Storyboard.TargetProperty="RenderTransform.ScaleX"
-                                                To="1.1"
-                                                Duration="00:00:00.10">
+                                                <DoubleAnimation Duration="00:00:00.10"
+                                                    Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                                    To="1.1">
                                                 </DoubleAnimation>
-                                                <DoubleAnimation
+                                                <DoubleAnimation Duration="00:00:00.10"
                                                 Storyboard.TargetProperty="RenderTransform.ScaleY"
-                                                To="1.1"
-                                                Duration="00:00:00.10">
+                                                To="1.1">
                                                 </DoubleAnimation>
                                             </Storyboard>
                                         </BeginStoryboard>
@@ -439,15 +426,13 @@
                                     <EventTrigger RoutedEvent="MouseLeave">
                                         <BeginStoryboard>
                                             <Storyboard>
-                                                <DoubleAnimation
-                                                Storyboard.TargetProperty="RenderTransform.ScaleX"
-                                                To="1"
-                                                Duration="00:00:00.20">
+                                                <DoubleAnimation Duration="00:00:00.20"
+                                                    Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                                    To="1">
                                                 </DoubleAnimation>
-                                                <DoubleAnimation
-                                                Storyboard.TargetProperty="RenderTransform.ScaleY"
-                                                To="1"
-                                                Duration="00:00:00.20">
+                                                <DoubleAnimation Duration="00:00:00.20"
+                                                    Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                                    To="1">
                                                 </DoubleAnimation>
                                             </Storyboard>
                                         </BeginStoryboard>
