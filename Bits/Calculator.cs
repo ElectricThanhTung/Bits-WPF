@@ -433,25 +433,11 @@ namespace Bits {
             foreach(Match match in Regex.Matches(expression.ToString(), @"\)\d+"))
                 expression = expression.Replace(match.Value, match.Value.Replace(")", ")*"));
             foreach(Match match in Regex.Matches(expression.ToString(), @"\d+PI"))
-                expression = expression.Replace(match.Value, match.Value.Replace("PI", "*PI"));
+                expression = expression.Replace(match.Value, "(" + match.Value.Replace("PI", "*PI") + ")");
             foreach(Match match in Regex.Matches(expression.ToString(), @"PI\d+"))
-                expression = expression.Replace(match.Value, match.Value.Replace("PI", "PI*"));
+                expression = expression.Replace(match.Value, "(" + match.Value.Replace("PI", "PI*") + ")");
             foreach(Match match in Regex.Matches(expression.ToString(), @"\d+!"))
                 expression = expression.Replace(match.Value, match.Value.Replace("!", "I"));
-
-            foreach(Match match in Regex.Matches(expression.ToString(), @"(\A|\D)\d+K(\z|\D)"))
-                expression = expression.Replace(match.Value, match.Value.Replace("K", "*1000"));
-            foreach(Match match in Regex.Matches(expression.ToString(), @"(\A|\D)\d+M(\z|\D)"))
-                expression = expression.Replace(match.Value, match.Value.Replace("M", "*1000000"));
-            foreach(Match match in Regex.Matches(expression.ToString(), @"(\A|\D)\d+T(\z|\D)"))
-                expression = expression.Replace(match.Value, match.Value.Replace("T", "*1000000000"));
-
-            foreach(Match match in Regex.Matches(expression.ToString(), @"(\A|\D)\d+K\d+"))
-                expression = expression.Replace(match.Value, match.Value.Replace("K", ",") + "*1000");
-            foreach(Match match in Regex.Matches(expression.ToString(), @"(\A|\D)\d+M\d+"))
-                expression = expression.Replace(match.Value, match.Value.Replace("M", ",") + "*1000000");
-            foreach(Match match in Regex.Matches(expression.ToString(), @"(\A|\D)\d+T\d+"))
-                expression = expression.Replace(match.Value, match.Value.Replace("T", ",") + "*1000000000");
 
             expression = expression.Replace("PI", Math.PI.ToString(provider));
             char lastChar = expression[expression.Length - 1];
@@ -501,6 +487,32 @@ namespace Bits {
                                 throw new Exception();
                         }
                         list[i] = new StringBuilder().Append(value.ToString());
+                    }
+                }
+                if(length >= 2) {
+                    char c = '0';
+                    decimal value = 0;
+                    string str = list[i].ToString();
+                    Match match = Regex.Match(str, @"\A\d+[KMT]\d+\z");
+                    if(match.Value.Length != 0) {
+                        int index = Regex.Match(str, @"\A\d+[KMT]").Value.Length - 1;
+                        c = list[i][index];
+                        str = str.Replace(str[index], ',');
+                        value = decimal.Parse(str, provider);
+                    }
+                    else if((match = Regex.Match(str, @"\A\d+(,\d+)?[KMT]\z")).Value.Length != 0) {
+                        value = decimal.Parse(str.Substring(0, str.Length - 1), provider);
+                        c = list[i][list[i].Length - 1];
+                    }
+                    if(match.Value.Length != 0) {
+                        if(c == 'K')
+                            value *= 1000;
+                        else if(c == 'M')
+                            value *= 1000000;
+                        else if(c == 'T')
+                            value *= 1000000000;
+                        list[i].Clear();
+                        list[i].Append(value.ToString(provider));
                     }
                 }
             }
