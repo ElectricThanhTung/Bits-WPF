@@ -12,7 +12,7 @@ namespace Bits {
 
         public MainWindow() {
             InitializeComponent();
-            this.WindowStyle = WindowStyle.SingleBorderWindow;
+            //this.WindowStyle = WindowStyle.SingleBorderWindow;
             Thread CalculationProcess = new Thread(CalculationHandler);
             CalculationProcess.IsBackground = true;
             CalculationProcess.Start();
@@ -59,12 +59,10 @@ namespace Bits {
         }
 
         private void Button_CloseWindows(object sender, RoutedEventArgs e) {
-            this.WindowStyle = WindowStyle.SingleBorderWindow;
             this.Close();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e) {
-            this.WindowStyle = WindowStyle.SingleBorderWindow;
             this.WindowState = WindowState.Minimized;
         }
 
