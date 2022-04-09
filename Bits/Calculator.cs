@@ -489,22 +489,46 @@ namespace Bits {
                         list[i] = new StringBuilder().Append(value.ToString());
                     }
                 }
+                if(length >= 3) {
+                    char c = '0';
+                    decimal value = 0;
+                    string str = list[i].ToString();
+                    Match match = Regex.Match(str, @"\A\d+(,\d+)?((KB)|(MB)|(GB)|(TB))\z");
+                    if(match.Length != 0) {
+                        int index = Regex.Match(str, @"\A\d+(,\d+)?").Length;
+                        c = list[i][index];
+                        str = str.Substring(0, index);
+                        value = decimal.Parse(str, provider);
+
+                        if(c == 'K')
+                            value *= 1024;
+                        else if(c == 'M')
+                            value *= 1024 * 1024;
+                        else if(c == 'G')
+                            value *= 1024 * 1024 * 1024;
+                        else if(c == 'T')
+                            value *= (decimal)1024 * 1024 * 1024 * 1024;
+                        list[i].Clear();
+                        list[i].Append(value.ToString(provider));
+                        continue;
+                    }
+                }
                 if(length >= 2) {
                     char c = '0';
                     decimal value = 0;
                     string str = list[i].ToString();
                     Match match = Regex.Match(str, @"\A\d+[KMT]\d+\z");
                     if(match.Value.Length != 0) {
-                        int index = Regex.Match(str, @"\A\d+[KMT]").Value.Length - 1;
+                        int index = Regex.Match(str, @"\A\d+[KMT]").Length - 1;
                         c = list[i][index];
                         str = str.Replace(str[index], ',');
                         value = decimal.Parse(str, provider);
                     }
-                    else if((match = Regex.Match(str, @"\A\d+(,\d+)?[KMT]\z")).Value.Length != 0) {
+                    else if((match = Regex.Match(str, @"\A\d+(,\d+)?[KMT]\z")).Length != 0) {
                         value = decimal.Parse(str.Substring(0, str.Length - 1), provider);
                         c = list[i][list[i].Length - 1];
                     }
-                    if(match.Value.Length != 0) {
+                    if(match.Length != 0) {
                         if(c == 'K')
                             value *= 1000;
                         else if(c == 'M')
@@ -513,6 +537,7 @@ namespace Bits {
                             value *= 1000000000;
                         list[i].Clear();
                         list[i].Append(value.ToString(provider));
+                        continue;
                     }
                 }
             }
