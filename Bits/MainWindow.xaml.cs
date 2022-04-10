@@ -4,18 +4,115 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Threading;
+using System.Windows.Threading;
+using System.Windows.Media.Imaging;
 
 namespace Bits {
     public partial class MainWindow : Window {
         private bool WindowShown = false;
         private bool RegisterEventEnabled = true;
+        private double topOld;
+        private bool TopmostEnable = false;
+        private Thread? animationThread = null;
+        private Size WindowSize = new Size(408, 239);
+
+        enum ZoomAnimationMode {
+            OpenWindow = 0,
+            CloseWindow = 1,
+            WindowMinimized = 2,
+            WindowNormal = 3,
+        }
 
         public MainWindow() {
             InitializeComponent();
             //this.WindowStyle = WindowStyle.SingleBorderWindow;
+            this.Opacity = 0D;
             Thread CalculationProcess = new Thread(CalculationHandler);
             CalculationProcess.IsBackground = true;
             CalculationProcess.Start();
+        }
+
+        private void ZoomAnimation(ZoomAnimationMode amimatinMode, ThreadStart? animationComplated) {
+            if(animationThread != null && animationThread.IsAlive)
+                return;
+
+            int N = 15;
+            double Left = this.Left;
+            double Top = this.Top;
+            
+            double fromScale;
+            double toScale;
+            double fromOpacity;
+            double toOpacity;
+            double topStep = 0;
+
+            if(amimatinMode == ZoomAnimationMode.OpenWindow || amimatinMode == ZoomAnimationMode.WindowNormal) {
+                fromScale = 0.5D;
+                toScale = 1D;
+                fromOpacity = 0;
+                toOpacity = 1;
+                topStep = (this.Top - topOld) / N;
+            }
+            else {
+                fromScale = 1D;
+                toScale = 0.5D;
+                fromOpacity = 1;
+                toOpacity = 0;
+                topStep = (SystemParameters.WorkArea.Height - this.Top) / (N * 2);
+                topOld = this.Top;
+            }
+
+            double fromW = fromScale * WindowSize.Width;
+            double fromH = fromScale * WindowSize.Height;
+            double toW = toScale * WindowSize.Width;
+            double toH = toScale * WindowSize.Height;
+
+            double W = MainGrid.Width;
+            double H = MainGrid.Height;
+
+            MainGrid.Width = fromW > toW ? fromW : toW;
+            MainGrid.Height = fromH > toH ? fromH : toH;
+            this.Left = this.Left + (W - MainGrid.Width) / 2;
+            this.Top = this.Top + (H - MainGrid.Height) / 2;
+
+            Image a = new Image();
+            a.Width = WindowSize.Width;
+            a.Height = WindowSize.Height;
+
+            MainView.Measure(WindowSize);
+            MainView.Arrange(new Rect(WindowSize));
+            RenderTargetBitmap bmp = new RenderTargetBitmap((int)WindowSize.Width, (int)WindowSize.Height, 96, 96, PixelFormats.Pbgra32);
+            bmp.Render(MainView);
+
+            a.Source = bmp;
+            MainGrid.Children.RemoveAt(0);
+            MainGrid.Children.Add(a);
+
+            animationThread = new Thread(() => {
+                try {
+                    for(int i = 0; i < N; i++) {
+                        this.Dispatcher.Invoke(() => {
+                            if(amimatinMode == ZoomAnimationMode.WindowMinimized)
+                                this.Top += topStep;
+                            else if(amimatinMode == ZoomAnimationMode.WindowNormal)
+                                this.Top -= topStep;
+                            a.Width = fromW + (toW - fromW) * i / (N - 1);
+                            a.Height = fromH + (toH - fromH) * i / (N - 1);
+                            this.Opacity = fromOpacity + (toOpacity - fromOpacity) * i / (N - 1);
+                        });
+                        Thread.Sleep(10);
+                    }
+                } catch { }
+
+                this.Dispatcher.Invoke(() => {
+                    MainGrid.Children.Add(MainView);
+                    MainGrid.Children.RemoveAt(0);
+                    if(animationComplated != null)
+                        animationComplated();
+                });
+            });
+            animationThread.IsBackground = true;
+            animationThread.Start();
         }
 
         override protected void OnContentRendered(EventArgs e) {
@@ -25,7 +122,14 @@ namespace Bits {
                 interger_textbox.MaxWidth = interger_textbox.ActualWidth;
                 hex_textbox.MaxWidth = hex_textbox.ActualWidth;
                 result_textblock.MaxWidth = result_textblock.ActualWidth;
-                this.InvalidateMeasure();
+
+                topOld = this.Top;
+
+                ZoomAnimation(ZoomAnimationMode.OpenWindow, delegate () {
+                    this.Activated += Window_Activated;
+                    this.Deactivated += Window_Deactivated;
+                    this.WindowState = WindowState.Normal;
+                });
             }
             base.OnContentRendered(e);
         }
@@ -59,11 +163,19 @@ namespace Bits {
         }
 
         private void Button_CloseWindows(object sender, RoutedEventArgs e) {
-            this.Close();
+            ZoomAnimation(ZoomAnimationMode.CloseWindow, delegate () {
+                this.Close();
+            });
         }
 
         private void Button_Click(object sender, RoutedEventArgs e) {
-            this.WindowState = WindowState.Minimized;
+            this.Activated -= Window_Activated;
+            this.Deactivated -= Window_Deactivated;
+            ZoomAnimation(ZoomAnimationMode.WindowMinimized, delegate () {
+                this.WindowState = WindowState.Minimized;
+                this.Activated += Window_Activated;
+                this.Deactivated += Window_Deactivated;
+            });
         }
 
         private void ClrResult() {
@@ -150,11 +262,11 @@ namespace Bits {
         }
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e) {
-            this.Topmost = true;
+            TopmostEnable = true;
         }
 
         private void CheckBox_Unchecked(object sender, RoutedEventArgs e) {
-            this.Topmost = false;
+            TopmostEnable = false;
         }
 
         private void expression_textbox_KeyDown(object sender, KeyEventArgs e) {
@@ -172,6 +284,62 @@ namespace Bits {
             if(result_textblock.Foreground != Brushes.Blue)
                 if(result_textblock.SelectionLength != 0)
                     result_textblock.SelectionLength = 0;
+        }
+
+        private void Window_Activated(object? sender, EventArgs e) {
+            if(this.WindowState == WindowState.Minimized) {
+                this.Activated -= Window_Activated;
+                this.Deactivated -= Window_Deactivated;
+                ZoomAnimation(ZoomAnimationMode.WindowNormal, delegate () {
+                    this.WindowState = WindowState.Normal;
+                    this.Activated += Window_Activated;
+                    this.Deactivated += Window_Deactivated;
+                });
+            }
+            else
+                this.Opacity = 1D;
+        }
+
+        private void Window_Deactivated(object? sender, EventArgs e) {
+            if(!TopmostEnable) {
+                if(this.WindowState == WindowState.Normal) {
+                    this.Activated -= Window_Activated;
+                    this.Deactivated -= Window_Deactivated;
+                    ZoomAnimation(ZoomAnimationMode.WindowMinimized, delegate () {
+                        this.WindowState = WindowState.Minimized;
+                        this.Activated += Window_Activated;
+                        this.Deactivated += Window_Deactivated;
+                    });
+                }
+            }
+            else {
+                if(this.WindowState != WindowState.Minimized) {
+                    topOld = this.Top;
+                    this.Opacity = 0.6D;
+                }
+                else
+                    this.Opacity = 0D;
+            }
+        }
+
+        private void Window_StateChanged(object sender, EventArgs e) {
+            this.Activated -= Window_Activated;
+            this.Deactivated -= Window_Deactivated;
+            if(this.WindowState == WindowState.Minimized) {
+                this.Activated -= Window_Activated;
+                ZoomAnimation(ZoomAnimationMode.WindowMinimized, delegate () {
+                    this.WindowState = WindowState.Minimized;
+                    this.Activated += Window_Activated;
+                    this.Deactivated += Window_Deactivated;
+                });
+            }
+            else {
+                ZoomAnimation(ZoomAnimationMode.WindowNormal, delegate () {
+                    this.WindowState = WindowState.Normal;
+                    this.Activated += Window_Activated;
+                    this.Deactivated += Window_Deactivated;
+                });
+            }
         }
     }
 }
