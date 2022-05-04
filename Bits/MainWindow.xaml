@@ -1,381 +1,238 @@
 ﻿<Window x:Class="Bits.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Bits"
-        mc:Ignorable="d"
-        WindowStyle="None"
-        AllowsTransparency="False"
-        ResizeMode="CanMinimize"
-        Background="Purple"
-        SizeToContent="WidthAndHeight"
-        FontFamily="Microsoft Sans Serif"
-        MouseDown="Window_MouseDown"
-        WindowStartupLocation="CenterScreen"
-        Title="Bits">
-    <Window.Effect>
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="clr-namespace:Bits"
+    mc:Ignorable="d"
+    WindowStyle="None"
+    AllowsTransparency="True"
+    ResizeMode="CanMinimize"
+    Background="Transparent"
+    SizeToContent="WidthAndHeight"
+    FontFamily="Microsoft Sans Serif"
+    MouseDown="Window_MouseDown"
+    StateChanged="Window_StateChanged"
+    WindowStartupLocation="CenterScreen"
+    Title="Bits">
+    <!--<Window.Effect>
         <DropShadowEffect Color="Gray" BlurRadius="20" Direction="-90" RenderingBias="Quality" ShadowDepth="4"/>
-    </Window.Effect>
+    </Window.Effect>-->
     <WindowChrome.WindowChrome>
         <WindowChrome GlassFrameThickness="0" CornerRadius="0" CaptionHeight="0" UseAeroCaptionButtons="False" ResizeBorderThickness="7"/>
     </WindowChrome.WindowChrome>
-    <Viewbox x:Name="MainView" Width="408" Height="238"
-        HorizontalAlignment="Center"
-        VerticalAlignment="Center">
-        <Grid HorizontalAlignment="Center">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="30"></RowDefinition>
-                <RowDefinition></RowDefinition>
-            </Grid.RowDefinitions>
-            <StackPanel Orientation="Horizontal"
-                Grid.Row="0"
-                VerticalAlignment="Center"
-                HorizontalAlignment="Left">
-                <Image Source="/Bits;component/Images/bits_icon.png"
-                    Margin="4 0 0 0"
-                    Width="22"
-                    Height="22">
-                </Image>
-                <TextBlock Text="Bits"
+    <Grid x:Name="MainGrid">
+        <Border x:Name="MainView" Background="Purple" CornerRadius="6">
+            <Grid HorizontalAlignment="Center">
+                <Grid.Clip>
+                    <RectangleGeometry Rect="2 2 404 235" RadiusX="4" RadiusY="4"/>
+                </Grid.Clip>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal"
                     Grid.Row="0"
-                    Margin="5 0 0 0"
-                    FontWeight="Bold"
-                    FontSize="13"
-                    Foreground="White"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Left">
-                </TextBlock>
-            </StackPanel>
-            <StackPanel Margin="2 1 2 1"
-                Grid.Row="0"
-                Orientation="Horizontal"
-                VerticalAlignment="Top"
-                HorizontalAlignment="Right">
-                <Button Content="_"
-                    HorizontalContentAlignment="Center"
-                    VerticalContentAlignment="Center"
-                    Width="30"
-                    Height="28"
-                    BorderThickness="0"
-                    Foreground="White"
-                    Click="Button_Click">
-                    <Button.Style>
-                        <Style TargetType="{x:Type Button}">
-                            <Setter Property="Background" Value="Purple"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type Button}">
-                                        <Border Background="{TemplateBinding Background}">
-                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                            <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="#D000D0"/>
-                                </Trigger>
-                                <Trigger Property="IsPressed" Value="True">
-                                    <Setter Property="Background" Value="#B000B0"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                </Button>
-                <Button Content="X"
-                    HorizontalContentAlignment="Center"
-                    VerticalContentAlignment="Center"
-                    Width="30"
-                    Height="28"
-                    BorderThickness="0"
-                    Foreground="White"
-                    Click="Button_CloseWindows">
-                    <Button.Style>
-                        <Style TargetType="{x:Type Button}">
-                            <Setter Property="Background" Value="Purple"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type Button}">
-                                        <Border Background="{TemplateBinding Background}">
-                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                            <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="Red"/>
-                                </Trigger>
-                                <Trigger Property="IsPressed" Value="True">
-                                    <Setter Property="Background" Value="#D00000"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                </Button>
-            </StackPanel>
-            <StackPanel Margin="2 0 2 2"
-                Grid.Row="1"
-                Background="White">
-                <StackPanel Orientation="Horizontal" Margin="0 3 0 3">
-                    <StackPanel HorizontalAlignment="Center" Margin="5 0 5 0">
-                        <StackPanel Orientation="Horizontal" Margin="0 0 0 2">
-                            <TextBlock Text="Byte 3:"
-                                FontSize="11"
-                                Padding="0">
-                            </TextBlock>
-                            <TextBlock Text="00000000"
-                                x:Name="binary_text_3"
-                                Padding="0"
-                                FontSize="11"
-                                Margin="5 0 0 0"
-                                Foreground="Green">
-                            </TextBlock>
-                        </StackPanel>
-                        <local:Register x:Name="reg3"
-                            Cursor="Hand"
-                            BitOffset="24"
-                            ValueChanged="Register_ValueChanged"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top"
-                            Height="23" Width="192">
-                        </local:Register>
-                    </StackPanel>
-                    <StackPanel HorizontalAlignment="Center" Margin="5 0 5 0">
-                        <StackPanel Orientation="Horizontal" Margin="0 0 0 2">
-                            <TextBlock Text="Byte 2:"
-                                FontSize="11"
-                                Padding="0">
-                            </TextBlock>
-                            <TextBlock Text="00000000"
-                                x:Name="binary_text_2"
-                                Padding="0"
-                                FontSize="11"
-                                Margin="5 0 0 0"
-                                Foreground="Green">
-                            </TextBlock>
-                        </StackPanel>
-                        <local:Register x:Name="reg2"
-                            Cursor="Hand"
-                            BitOffset="16"
-                            ValueChanged="Register_ValueChanged"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top"
-                            Height="23" Width="192">
-                        </local:Register>
-                    </StackPanel>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0 3 0 3">
-                    <StackPanel HorizontalAlignment="Center" Margin="5 0 5 0">
-                        <StackPanel Orientation="Horizontal" Margin="0 0 0 2">
-                            <TextBlock Text="Byte 1:"
-                                FontSize="11"
-                                Padding="0">
-                            </TextBlock>
-                            <TextBlock Text="00000000"
-                                x:Name="binary_text_1"
-                                Padding="0"
-                                FontSize="11"
-                                Margin="5 0 0 0"
-                                Foreground="Green">
-                            </TextBlock>
-                        </StackPanel>
-                        <local:Register x:Name="reg1"
-                            Cursor="Hand"
-                            BitOffset="8"
-                            ValueChanged="Register_ValueChanged"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top"
-                            Height="23" Width="192">
-                        </local:Register>
-                    </StackPanel>
-                    <StackPanel HorizontalAlignment="Center" Margin="5 0 5 0">
-                        <StackPanel Orientation="Horizontal" Margin="0 0 0 2">
-                            <TextBlock Text="Byte 0:"
-                                FontSize="11"
-                                Padding="0">
-                            </TextBlock>
-                            <TextBlock Text="00000000"
-                                x:Name="binary_text_0"
-                                Padding="0"
-                                FontSize="11"
-                                Margin="5 0 0 0"
-                                Foreground="Green">
-                            </TextBlock>
-                        </StackPanel>
-                        <local:Register x:Name="reg0"
-                            Cursor="Hand"
-                            BitOffset="0"
-                            ValueChanged="Register_ValueChanged"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top"
-                            Height="23" Width="192">
-                        </local:Register>
-                    </StackPanel>
-                </StackPanel>
-                <TextBlock
-                    RenderTransformOrigin="1 0"
-                    Text="Clear"
-                    Padding="0"
-                    FontSize="11"
-                    Margin="0 0 5 0"
-                    Foreground="Blue"
-                    Cursor="Hand"
-                    HorizontalAlignment="Right"
-                    MouseDown="TextBlock_MouseDown"
-                    MouseEnter="TextBlock_MouseEnter"
-                    MouseLeave="TextBlock_MouseLeave">
-                    <TextBlock.Resources>
-                        <Style TargetType="TextBlock">
-                            <Setter
-                                Property="RenderTransform">
-                                <Setter.Value>
-                                    <ScaleTransform x:Name="transform"></ScaleTransform>
-                                </Setter.Value>
-                            </Setter>
-                            <Style.Triggers>
-                                <EventTrigger RoutedEvent="MouseDown">
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Duration="00:00:00.05"
-                                                Storyboard.TargetProperty="RenderTransform.ScaleX"
-                                                To="1.05">
-                                            </DoubleAnimation>
-                                            <DoubleAnimation Duration="00:00:00.05"
-                                                Storyboard.TargetProperty="RenderTransform.ScaleY"
-                                                To="1.05">
-                                            </DoubleAnimation>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </EventTrigger>
-                                <EventTrigger RoutedEvent="MouseUp">
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Duration="00:00:00.05"
-                                                Storyboard.TargetProperty="RenderTransform.ScaleX"
-                                                To="1.1">
-                                            </DoubleAnimation>
-                                            <DoubleAnimation Duration="00:00:00.05"
-                                                Storyboard.TargetProperty="RenderTransform.ScaleY"
-                                                To="1.1">
-                                            </DoubleAnimation>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </EventTrigger>
-                                <EventTrigger RoutedEvent="MouseEnter">
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Duration="00:00:00.10"
-                                                Storyboard.TargetProperty="RenderTransform.ScaleX"
-                                                To="1.1">
-                                            </DoubleAnimation>
-                                            <DoubleAnimation Duration="00:00:00.10"
-                                                Storyboard.TargetProperty="RenderTransform.ScaleY"
-                                                To="1.1">
-                                            </DoubleAnimation>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </EventTrigger>
-                                <EventTrigger RoutedEvent="MouseLeave">
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Duration="00:00:00.20"
-                                                Storyboard.TargetProperty="RenderTransform.ScaleX"
-                                                To="1">
-                                            </DoubleAnimation>
-                                            <DoubleAnimation Duration="00:00:00.20"
-                                                Storyboard.TargetProperty="RenderTransform.ScaleY"
-                                                To="1">
-                                            </DoubleAnimation>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </EventTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Resources>
-                </TextBlock>
-                <Grid Margin="5 0 5 2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="Expression:"></TextBlock>
-                    <TextBox Grid.Column="1" Text="0"
-                        x:Name="result_textblock"
-                        Margin="5 0 40 0"
-                        BorderThickness="0"
-                        SelectionChanged="result_textblock_SelectionChanged"
-                        IsReadOnly="True"
-                        Foreground="Blue">
-                    </TextBox>
-                </Grid>
-                <TextBox Height="24"
-                    x:Name="expression_textbox"
-                    SelectionBrush="Blue"
-                    FontSize="14"
-                    VerticalContentAlignment="Center"
-                    BorderBrush="DimGray"
-                    Margin="5 0 5 5"
-                    KeyDown="expression_textbox_KeyDown">
-                </TextBox>
-                <Grid Margin="5 0 5 0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition></ColumnDefinition>
-                        <ColumnDefinition></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition></RowDefinition>
-                        <RowDefinition></RowDefinition>
-                        <RowDefinition></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <TextBlock Text="Decimal result (Interger):"
+                    <Image Source="/Bits;component/Images/bits_icon.png"
+                        Margin="4 0 0 0"
+                        Width="22"
+                        Height="22">
+                    </Image>
+                    <TextBlock Text="Bits"
                         Grid.Row="0"
-                        Grid.Column="0"
-                        Margin="0 0 5 0">
-                    </TextBlock>
-                    <TextBox Height="24"
-                        x:Name="interger_textbox"
-                        Grid.Row="1"
-                        Grid.Column="0"
-                        Margin="0 0 5 0"
-                        SelectionBrush="Blue"
-                        FontSize="14"
-                        VerticalContentAlignment="Center"
-                        IsReadOnly="True"
-                        BorderBrush="DimGray">
-                    </TextBox>
-                    <TextBlock Text="Hexadecimal result (HEX):"
-                        Grid.Row="0"
-                        Grid.Column="1"
-                        Margin="5 0 0 0">
-                    </TextBlock>
-                    <TextBox Height="24"
-                        x:Name="hex_textbox"
-                        Grid.Row="1"
-                        Grid.Column="1"
                         Margin="5 0 0 0"
-                        SelectionBrush="Blue"
-                        FontSize="14"
+                        FontWeight="Bold"
+                        FontSize="13"
+                        Foreground="White"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Left">
+                    </TextBlock>
+                </StackPanel>
+                <StackPanel Margin="2 1 1 1"
+                    Grid.Row="0"
+                    Orientation="Horizontal"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Right">
+                    <Button Content="_"
+                        HorizontalContentAlignment="Center"
                         VerticalContentAlignment="Center"
-                        IsReadOnly="True"
-                        BorderBrush="DimGray">
-                    </TextBox>
-                    <TextBlock Text="Information"
-                        RenderTransformOrigin="0 0.5"
-                        Cursor="Hand"
-                        Width="65"
-                        Margin="0 5 0 5"
-                        Grid.Row="2"
-                        Grid.Column="0"
+                        Width="30"
+                        Height="28"
+                        BorderThickness="0"
+                        Foreground="White"
+                        Click="Button_Click">
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}">
+                                <Setter Property="Background" Value="Purple"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type Button}">
+                                            <Border Background="{TemplateBinding Background}">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#D000D0"/>
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter Property="Background" Value="#B000B0"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <Button Content="X"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Width="30"
+                        Height="28"
+                        BorderThickness="0"
+                        Foreground="White"
+                        Click="Button_CloseWindows">
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}">
+                                <Setter Property="Background" Value="Purple"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type Button}">
+                                            <Border Background="{TemplateBinding Background}">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="Red"/>
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter Property="Background" Value="#D00000"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </StackPanel>
+                <StackPanel Margin="2 0 2 2"
+                    Grid.Row="1"
+                    Background="White">
+                    <StackPanel Orientation="Horizontal" Margin="0 3 0 3">
+                        <StackPanel HorizontalAlignment="Center" Margin="5 0 5 0">
+                            <StackPanel Orientation="Horizontal" Margin="0 0 0 2">
+                                <TextBlock Text="Byte 3:"
+                                    FontSize="11"
+                                    Padding="0">
+                                </TextBlock>
+                                <TextBlock Text="00000000"
+                                    x:Name="binary_text_3"
+                                    Padding="0"
+                                    FontSize="11"
+                                    Margin="5 0 0 0"
+                                    Foreground="Green">
+                                </TextBlock>
+                            </StackPanel>
+                            <local:Register x:Name="reg3"
+                                Cursor="Hand"
+                                BitOffset="24"
+                                ValueChanged="Register_ValueChanged"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Height="23" Width="192">
+                            </local:Register>
+                        </StackPanel>
+                        <StackPanel HorizontalAlignment="Center" Margin="5 0 5 0">
+                            <StackPanel Orientation="Horizontal" Margin="0 0 0 2">
+                                <TextBlock Text="Byte 2:"
+                                    FontSize="11"
+                                    Padding="0">
+                                </TextBlock>
+                                <TextBlock Text="00000000"
+                                    x:Name="binary_text_2"
+                                    Padding="0"
+                                    FontSize="11"
+                                    Margin="5 0 0 0"
+                                    Foreground="Green">
+                                </TextBlock>
+                            </StackPanel>
+                            <local:Register x:Name="reg2"
+                                Cursor="Hand"
+                                BitOffset="16"
+                                ValueChanged="Register_ValueChanged"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Height="23" Width="192">
+                            </local:Register>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0 3 0 3">
+                        <StackPanel HorizontalAlignment="Center" Margin="5 0 5 0">
+                            <StackPanel Orientation="Horizontal" Margin="0 0 0 2">
+                                <TextBlock Text="Byte 1:"
+                                    FontSize="11"
+                                    Padding="0">
+                                </TextBlock>
+                                <TextBlock Text="00000000"
+                                    x:Name="binary_text_1"
+                                    Padding="0"
+                                    FontSize="11"
+                                    Margin="5 0 0 0"
+                                    Foreground="Green">
+                                </TextBlock>
+                            </StackPanel>
+                            <local:Register x:Name="reg1"
+                                Cursor="Hand"
+                                BitOffset="8"
+                                ValueChanged="Register_ValueChanged"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Height="23" Width="192">
+                            </local:Register>
+                        </StackPanel>
+                        <StackPanel HorizontalAlignment="Center" Margin="5 0 5 0">
+                            <StackPanel Orientation="Horizontal" Margin="0 0 0 2">
+                                <TextBlock Text="Byte 0:"
+                                    FontSize="11"
+                                    Padding="0">
+                                </TextBlock>
+                                <TextBlock Text="00000000"
+                                    x:Name="binary_text_0"
+                                    Padding="0"
+                                    FontSize="11"
+                                    Margin="5 0 0 0"
+                                    Foreground="Green">
+                                </TextBlock>
+                            </StackPanel>
+                            <local:Register x:Name="reg0"
+                                Cursor="Hand"
+                                BitOffset="0"
+                                ValueChanged="Register_ValueChanged"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Height="23" Width="192">
+                            </local:Register>
+                        </StackPanel>
+                    </StackPanel>
+                    <TextBlock
+                        RenderTransformOrigin="1 0"
+                        Text="Clear"
+                        Padding="0"
+                        FontSize="11"
+                        Margin="0 0 5 0"
                         Foreground="Blue"
-                        HorizontalAlignment="Left"
+                        Cursor="Hand"
+                        HorizontalAlignment="Right"
+                        MouseDown="TextBlock_MouseDown"
                         MouseEnter="TextBlock_MouseEnter"
                         MouseLeave="TextBlock_MouseLeave">
                         <TextBlock.Resources>
                             <Style TargetType="TextBlock">
                                 <Setter
-                                Property="RenderTransform">
+                                    Property="RenderTransform">
                                     <Setter.Value>
                                         <ScaleTransform x:Name="transform"></ScaleTransform>
                                     </Setter.Value>
@@ -417,8 +274,8 @@
                                                     To="1.1">
                                                 </DoubleAnimation>
                                                 <DoubleAnimation Duration="00:00:00.10"
-                                                Storyboard.TargetProperty="RenderTransform.ScaleY"
-                                                To="1.1">
+                                                    Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                                    To="1.1">
                                                 </DoubleAnimation>
                                             </Storyboard>
                                         </BeginStoryboard>
@@ -441,18 +298,165 @@
                             </Style>
                         </TextBlock.Resources>
                     </TextBlock>
-                    <CheckBox Content="Always on top"
+                    <Grid Margin="5 0 5 2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Expression:"></TextBlock>
+                        <TextBox Grid.Column="1" Text="0"
+                            x:Name="result_textblock"
+                            Margin="5 0 40 0"
+                            BorderThickness="0"
+                            SelectionChanged="result_textblock_SelectionChanged"
+                            IsReadOnly="True"
+                            Foreground="Blue">
+                        </TextBox>
+                    </Grid>
+                    <TextBox Height="24"
+                        x:Name="expression_textbox"
+                        SelectionBrush="Blue"
+                        FontSize="14"
                         VerticalContentAlignment="Center"
-                        Margin="0 5 0 5"
-                        Grid.Row="2"
-                        Grid.Column="1"
-                        BorderBrush="Black"
-                        HorizontalAlignment="Right"
-                        Checked="CheckBox_Checked"
-                        Unchecked="CheckBox_Unchecked">
-                    </CheckBox>
-                </Grid>
-            </StackPanel>
-        </Grid>
-    </Viewbox>
+                        BorderBrush="DimGray"
+                        Margin="5 0 5 5"
+                        KeyDown="expression_textbox_KeyDown">
+                    </TextBox>
+                    <Grid Margin="5 0 5 0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Decimal result (Interger):"
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Margin="0 0 5 0">
+                        </TextBlock>
+                        <TextBox Height="24"
+                            x:Name="interger_textbox"
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Margin="0 0 5 0"
+                            SelectionBrush="Blue"
+                            FontSize="14"
+                            VerticalContentAlignment="Center"
+                            IsReadOnly="True"
+                            BorderBrush="DimGray">
+                        </TextBox>
+                        <TextBlock Text="Hexadecimal result (HEX):"
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Margin="5 0 0 0">
+                        </TextBlock>
+                        <TextBox Height="24"
+                            x:Name="hex_textbox"
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="5 0 0 0"
+                            SelectionBrush="Blue"
+                            FontSize="14"
+                            VerticalContentAlignment="Center"
+                            IsReadOnly="True"
+                            BorderBrush="DimGray">
+                        </TextBox>
+                        <TextBlock Text="Information"
+                            RenderTransformOrigin="0 0.5"
+                            Cursor="Hand"
+                            Width="65"
+                            Margin="0 5 0 5"
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Foreground="Blue"
+                            HorizontalAlignment="Left"
+                            MouseEnter="TextBlock_MouseEnter"
+                            MouseLeave="TextBlock_MouseLeave">
+                            <TextBlock.Resources>
+                                <Style TargetType="TextBlock">
+                                    <Setter
+                                        Property="RenderTransform">
+                                        <Setter.Value>
+                                            <ScaleTransform x:Name="transform"></ScaleTransform>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                        <EventTrigger RoutedEvent="MouseDown">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation Duration="00:00:00.05"
+                                                        Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                                        To="1.05">
+                                                    </DoubleAnimation>
+                                                    <DoubleAnimation Duration="00:00:00.05"
+                                                        Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                                        To="1.05">
+                                                    </DoubleAnimation>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                        <EventTrigger RoutedEvent="MouseUp">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation Duration="00:00:00.05"
+                                                        Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                                        To="1.1">
+                                                    </DoubleAnimation>
+                                                    <DoubleAnimation Duration="00:00:00.05"
+                                                        Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                                        To="1.1">
+                                                    </DoubleAnimation>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                        <EventTrigger RoutedEvent="MouseEnter">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation Duration="00:00:00.10"
+                                                        Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                                        To="1.1">
+                                                    </DoubleAnimation>
+                                                    <DoubleAnimation Duration="00:00:00.10"
+                                                        Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                                        To="1.1">
+                                                    </DoubleAnimation>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                        <EventTrigger RoutedEvent="MouseLeave">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation Duration="00:00:00.20"
+                                                        Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                                        To="1">
+                                                    </DoubleAnimation>
+                                                    <DoubleAnimation Duration="00:00:00.20"
+                                                        Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                                        To="1">
+                                                    </DoubleAnimation>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Resources>
+                        </TextBlock>
+                        <CheckBox Content="Always on top"
+                            VerticalContentAlignment="Center"
+                            Margin="0 5 0 5"
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            BorderBrush="Black"
+                            HorizontalAlignment="Right"
+                            Checked="CheckBox_Changed"
+                            Unchecked="CheckBox_Changed">
+                        </CheckBox>
+                    </Grid>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
 </Window>
