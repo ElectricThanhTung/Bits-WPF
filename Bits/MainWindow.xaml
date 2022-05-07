@@ -313,15 +313,16 @@
                             Foreground="Blue">
                         </TextBox>
                     </Grid>
-                    <TextBox Height="24"
+                    <local:CustomTextBox Height="24"
                         x:Name="expression_textbox"
                         SelectionBrush="Blue"
                         FontSize="14"
                         VerticalContentAlignment="Center"
                         BorderBrush="DimGray"
                         Margin="5 0 5 5"
+                        ScrollViewer.ScrollChanged="expression_textbox_ScrollChanged"
                         KeyDown="expression_textbox_KeyDown">
-                    </TextBox>
+                    </local:CustomTextBox>
                     <Grid Margin="5 0 5 0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition></ColumnDefinition>
