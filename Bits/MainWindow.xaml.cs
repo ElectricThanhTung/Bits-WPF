@@ -4,7 +4,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Threading;
-using System.Windows.Threading;
 using System.Windows.Media.Imaging;
 
 namespace Bits {
@@ -23,8 +22,8 @@ namespace Bits {
 
         public MainWindow() {
             InitializeComponent();
-            //this.WindowStyle = WindowStyle.SingleBorderWindow;
             this.Opacity = 0D;
+            expression_textbox.Width = 394;
             Thread CalculationProcess = new Thread(CalculationHandler);
             CalculationProcess.IsBackground = true;
             CalculationProcess.Start();
@@ -115,6 +114,7 @@ namespace Bits {
                 this.Dispatcher.Invoke(() => {
                     MainGrid.Children.Add(MainView);
                     MainGrid.Children.RemoveAt(0);
+                    expression_textbox.Focus();
 
                     if(amimatinMode == ZoomAnimationMode.WindowNormal)
                         this.WindowState = WindowState.Normal;
@@ -143,7 +143,6 @@ namespace Bits {
                 interger_textbox.MaxWidth = interger_textbox.ActualWidth;
                 hex_textbox.MaxWidth = hex_textbox.ActualWidth;
                 result_textblock.MaxWidth = result_textblock.ActualWidth;
-
                 topOld = this.Top;
 
                 ZoomAnimation(ZoomAnimationMode.OpenWindow, null);
@@ -318,6 +317,13 @@ namespace Bits {
                 ZoomAnimation(ZoomAnimationMode.WindowMinimized, null);
             else
                 ZoomAnimation(ZoomAnimationMode.WindowNormal, null);
+        }
+
+        private void expression_textbox_ScrollChanged(object sender, ScrollChangedEventArgs e) {
+            if(expression_textbox.HorizontalOffset == 0)
+                expression_textbox.Padding = new Thickness(-3, 3, 0, 3);
+            else
+                expression_textbox.Padding = new Thickness(2, 3, 0, 3);
         }
     }
 }
