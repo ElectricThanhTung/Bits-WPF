@@ -1,3 +1,8 @@
 *.pdb
 .vs/
 obj/
+
+BitsPackage/bin
+BitsPackage/AppPackages
+BitsPackage/BundleArtifacts
+Bits/bin/Release/net6.0-windows/win-x86/
