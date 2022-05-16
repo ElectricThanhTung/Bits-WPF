@@ -4,14 +4,12 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Threading;
-using System.Windows.Media.Imaging;
 
 namespace Bits {
     public partial class MainWindow : Window {
         private bool WindowShown = false;
         private bool RegisterEventEnabled = true;
-        private double topOld;
-        private Thread? animationThread = null;
+        private BitsWindowAnimation windowAnimation;
 
         enum ZoomAnimationMode {
             OpenWindow = 0,
@@ -22,137 +20,22 @@ namespace Bits {
 
         public MainWindow() {
             InitializeComponent();
-            this.Opacity = 0D;
+            windowAnimation = new BitsWindowAnimation(this);
             expression_textbox.Width = 394;
+            this.ContentRendered += Window_ContentRendered;
             Thread CalculationProcess = new Thread(CalculationHandler);
             CalculationProcess.IsBackground = true;
             CalculationProcess.Start();
         }
 
-        private void ZoomAnimation(ZoomAnimationMode amimatinMode, ThreadStart? animationComplated) {
-            if(animationThread != null && animationThread.IsAlive)
-                return;
-
-            this.Activated -= Window_Activated;
-            this.Deactivated -= Window_Deactivated;
-            this.StateChanged -= Window_StateChanged;
-
-            Size WindowSize = new Size(408, 239);
-            int N = 15;
-            double Left = this.Left;
-            double Top = this.Top;
-            
-            double fromScale;
-            double toScale;
-            double fromOpacity;
-            double toOpacity;
-            double topStep = 0;
-
-            if(amimatinMode == ZoomAnimationMode.OpenWindow || amimatinMode == ZoomAnimationMode.WindowNormal) {
-                fromScale = 0.5D;
-                toScale = 1D;
-                fromOpacity = 0;
-                toOpacity = 1;
-                topStep = (this.Top - topOld) / N;
-            }
-            else {
-                this.WindowState = WindowState.Normal;
-
-                fromScale = 1D;
-                toScale = 0.5D;
-                fromOpacity = 1;
-                toOpacity = 0;
-                topStep = (SystemParameters.WorkArea.Height - this.Top) / (N * 2);
-                topOld = this.Top;
-            }
-
-            double fromW = fromScale * WindowSize.Width;
-            double fromH = fromScale * WindowSize.Height;
-            double toW = toScale * WindowSize.Width;
-            double toH = toScale * WindowSize.Height;
-
-            double W = MainGrid.Width;
-            double H = MainGrid.Height;
-
-            MainGrid.Width = fromW > toW ? fromW : toW;
-            MainGrid.Height = fromH > toH ? fromH : toH;
-            this.Left = this.Left + (W - MainGrid.Width) / 2;
-            this.Top = this.Top + (H - MainGrid.Height) / 2;
-
-            Image a = new Image();
-            a.Width = WindowSize.Width;
-            a.Height = WindowSize.Height;
-
-            MainView.Measure(WindowSize);
-            MainView.Arrange(new Rect(WindowSize));
-            RenderTargetBitmap bmp = new RenderTargetBitmap((int)WindowSize.Width, (int)WindowSize.Height, 96, 96, PixelFormats.Pbgra32);
-            bmp.Render(MainView);
-
-            a.Source = bmp;
-            MainGrid.Children.RemoveAt(0);
-            MainGrid.Children.Add(a);
-
-            if(amimatinMode == ZoomAnimationMode.CloseWindow || amimatinMode == ZoomAnimationMode.WindowMinimized)
-                this.Opacity = 1D;
-
-            animationThread = new Thread(() => {
-                try {
-                    for(int i = 0; i < N; i++) {
-                        this.Dispatcher.Invoke(() => {
-                            if(amimatinMode == ZoomAnimationMode.WindowMinimized)
-                                this.Top += topStep;
-                            else if(amimatinMode == ZoomAnimationMode.WindowNormal)
-                                this.Top -= topStep;
-                            a.Width = fromW + (toW - fromW) * i / (N - 1);
-                            a.Height = fromH + (toH - fromH) * i / (N - 1);
-                            this.Opacity = fromOpacity + (toOpacity - fromOpacity) * i / (N - 1);
-                        });
-                        Thread.Sleep(10);
-                    }
-                } catch { }
-
-                this.Dispatcher.Invoke(() => {
-                    MainGrid.Children.Add(MainView);
-                    MainGrid.Children.RemoveAt(0);
-                    expression_textbox.Focus();
-
-                    if(amimatinMode == ZoomAnimationMode.WindowNormal)
-                        this.WindowState = WindowState.Normal;
-                    else if(amimatinMode == ZoomAnimationMode.WindowMinimized) {
-                        MainGrid.Width = WindowSize.Width;
-                        MainGrid.Height = WindowSize.Height;
-                        this.WindowState = WindowState.Minimized;
-                    }
-
-                    this.Activated += Window_Activated;
-                    this.Deactivated += Window_Deactivated;
-                    this.StateChanged += Window_StateChanged;
-
-                    if(animationComplated != null)
-                        animationComplated();
-                });
-            });
-            animationThread.IsBackground = true;
-            animationThread.Start();
-        }
-
-        override protected void OnContentRendered(EventArgs e) {
+        private void Window_ContentRendered(object? sender, EventArgs e) {
             if(!WindowShown) {
                 WindowShown = true;
                 expression_textbox.MaxWidth = expression_textbox.ActualWidth;
                 interger_textbox.MaxWidth = interger_textbox.ActualWidth;
                 hex_textbox.MaxWidth = hex_textbox.ActualWidth;
                 result_textblock.MaxWidth = result_textblock.ActualWidth;
-                topOld = this.Top;
-
-                ZoomAnimation(ZoomAnimationMode.OpenWindow, null);
             }
-            base.OnContentRendered(e);
-        }
-
-        private void Window_MouseDown(object sender, MouseButtonEventArgs e) {
-            if(e.GetPosition(this).Y < 30 && e.ChangedButton == MouseButton.Left)
-                this.DragMove();
         }
 
         private void Register_ValueChanged(object sender) {
@@ -179,16 +62,11 @@ namespace Bits {
         }
 
         private void Button_CloseWindows(object sender, RoutedEventArgs e) {
-            ZoomAnimation(ZoomAnimationMode.CloseWindow, delegate () {
-                this.Close();
-            });
+            windowAnimation.Close();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e) {
-            this.Activated -= Window_Activated;
-            this.Deactivated -= Window_Deactivated;
-            this.StateChanged -= Window_StateChanged;
-            ZoomAnimation(ZoomAnimationMode.WindowMinimized, null);
+            this.WindowState = WindowState.Minimized;
         }
 
         private void ClrResult() {
@@ -296,27 +174,13 @@ namespace Bits {
                     result_textblock.SelectionLength = 0;
         }
 
-        private void Window_Activated(object? sender, EventArgs e) {
-            if(this.WindowState != WindowState.Minimized)
-                this.Opacity = 1D;
-        }
-
         private void Window_Deactivated(object? sender, EventArgs e) {
             if(this.Topmost) {
-                if(this.WindowState != WindowState.Minimized) {
-                    topOld = this.Top;
+                if(this.WindowState != WindowState.Minimized)
                     this.Opacity = 0.6D;
-                }
                 else
                     this.Opacity = 0D;
             }
-        }
-
-        private void Window_StateChanged(object? sender, EventArgs e) {
-            if(this.WindowState == WindowState.Minimized)
-                ZoomAnimation(ZoomAnimationMode.WindowMinimized, null);
-            else
-                ZoomAnimation(ZoomAnimationMode.WindowNormal, null);
         }
 
         private void expression_textbox_ScrollChanged(object sender, ScrollChangedEventArgs e) {
@@ -324,6 +188,12 @@ namespace Bits {
                 expression_textbox.Padding = new Thickness(-3, 3, 0, 3);
             else
                 expression_textbox.Padding = new Thickness(2, 3, 0, 3);
+        }
+
+        private void TextBlock_MouseUp(object sender, MouseButtonEventArgs e) {
+            Info info = new Info();
+            info.Owner = this;
+            info.ShowDialog();
         }
     }
 }

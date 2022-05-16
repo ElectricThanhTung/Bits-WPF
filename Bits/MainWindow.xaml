@@ -11,8 +11,6 @@
     Background="Transparent"
     SizeToContent="WidthAndHeight"
     FontFamily="Microsoft Sans Serif"
-    MouseDown="Window_MouseDown"
-    StateChanged="Window_StateChanged"
     WindowStartupLocation="CenterScreen"
     Title="Bits">
     <!--<Window.Effect>
@@ -21,8 +19,8 @@
     <WindowChrome.WindowChrome>
         <WindowChrome GlassFrameThickness="0" CornerRadius="0" CaptionHeight="0" UseAeroCaptionButtons="False" ResizeBorderThickness="7"/>
     </WindowChrome.WindowChrome>
-    <Grid x:Name="MainGrid">
-        <Border x:Name="MainView" Background="Purple" CornerRadius="6">
+    <Grid>
+        <Border Background="Purple" CornerRadius="6">
             <Grid HorizontalAlignment="Center">
                 <Grid.Clip>
                     <RectangleGeometry Rect="2 2 404 235" RadiusX="4" RadiusY="4"/>
@@ -374,6 +372,7 @@
                             Grid.Column="0"
                             Foreground="Blue"
                             HorizontalAlignment="Left"
+                            MouseUp="TextBlock_MouseUp"
                             MouseEnter="TextBlock_MouseEnter"
                             MouseLeave="TextBlock_MouseLeave">
                             <TextBlock.Resources>
@@ -450,6 +449,7 @@
                             Margin="0 5 0 5"
                             Grid.Row="2"
                             Grid.Column="1"
+                            Cursor="Hand"
                             BorderBrush="Black"
                             HorizontalAlignment="Right"
                             Checked="CheckBox_Changed"
