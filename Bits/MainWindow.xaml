@@ -12,6 +12,7 @@
     SizeToContent="WidthAndHeight"
     FontFamily="Microsoft Sans Serif"
     WindowStartupLocation="CenterScreen"
+    UseLayoutRounding="True"
     Title="Bits">
     <!--<Window.Effect>
         <DropShadowEffect Color="Gray" BlurRadius="20" Direction="-90" RenderingBias="Quality" ShadowDepth="4"/>
@@ -35,6 +36,8 @@
                     HorizontalAlignment="Left">
                     <Image Source="/Bits;component/Images/bits_icon.png"
                         Margin="4 0 0 0"
+                        RenderOptions.BitmapScalingMode="HighQuality"
+                        RenderOptions.EdgeMode="Aliased"
                         Width="22"
                         Height="22">
                     </Image>

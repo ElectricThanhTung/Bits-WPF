@@ -18,6 +18,7 @@
     <None Remove="bits_icon.ico" />
     <None Remove="bits_icon.png" />
     <None Remove="Images\bits_icon.png" />
+    <None Remove="Images\info_icon.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,6 +32,7 @@
   <ItemGroup>
     <Resource Include="bits_icon.ico" />
     <Resource Include="bits_icon.png" />
+    <Resource Include="Images\info_icon.png" />
   </ItemGroup>
 
   <ItemGroup>
