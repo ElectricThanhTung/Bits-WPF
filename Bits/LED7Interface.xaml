@@ -5,7 +5,175 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Bits"
              mc:Ignorable="d" >
-    <Grid Background="White">
-        <TextBlock FontSize="20" Text="LED 7 Seg"/>
+    <Grid Background="Gray">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0" Margin="0 0 0 1" Background="White">
+            <local:LED7Seg x:Name="led"
+                Width="130"
+                Height="177"
+                HorizontalAlignment="Left"
+                ValueChanged="led_ValueChanged">
+            </local:LED7Seg>
+        </Grid>
+        <Grid Margin="1 0 0 1" Grid.Column="1" Background="White">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" Margin="10 0 0 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0"
+                    Grid.Column="0"
+                    Text="LED Type:"
+                    FontWeight="DemiBold"
+                    FontSize="12"
+                    Foreground="#303030"
+                    VerticalAlignment="Center">
+                </TextBlock>
+                <ComboBox x:Name="LEDTypeComboBox"
+                    Grid.Row="0" Grid.Column="1"
+                    Foreground="DarkBlue"
+                    FontWeight="DemiBold"
+                    SelectionChanged="LEDTypeComboBox_SelectionChanged"
+                    Margin="5 5 3 0" SelectedIndex="0">
+                    <ComboBoxItem Content="Common Cathode"/>
+                    <ComboBoxItem Content="Common Anode"/>
+                </ComboBox>
+                <TextBlock Grid.Row="1"
+                    Grid.Column="0"
+                    Text="Code:"
+                    FontWeight="DemiBold"
+                    FontSize="15"
+                    Foreground="#303030"
+                    VerticalAlignment="Center">
+                </TextBlock>
+                <Grid Grid.Row="1" Grid.Column="1" Margin="5 5 3 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBox x:Name="ResultBox"
+                        Grid.Column="0"
+                        Height="24" Text="0x00"
+                        FontSize="17"
+                        FontWeight="Bold"
+                        Foreground="#006400"
+                        TextChanged="ResultBox_TextChanged"
+                        VerticalContentAlignment="Center">
+                        <TextBox.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="3"/>
+                            </Style>
+                        </TextBox.Resources>
+                    </TextBox>
+                    <Button Grid.Column="1"
+                        Margin="5 0 0 0"
+                        BorderThickness="0"
+                        Width="60"
+                        FontWeight="DemiBold"
+                        Foreground="White"
+                        Click="Button1_Click"
+                        Content="Clear">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="3"/>
+                            </Style>
+                        </Button.Resources>
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}">
+                                <Setter Property="Background" Value="#B05010"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type Button}">
+                                            <Border Background="{TemplateBinding Background}">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#C06010"/>
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter Property="Background" Value="#A04000"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </Grid>
+            </Grid>
+            <TextBlock Grid.Row="1"
+                VerticalAlignment="Bottom"
+                Text="Code from 0 to 9:"
+                Margin="10 0 0 0"
+                FontWeight="DemiBold"
+                Foreground="#303030">
+            </TextBlock>
+            <Button Grid.Row="1"
+                HorizontalAlignment="Right"
+                Margin="0 20 3 0"
+                BorderThickness="0"
+                Width="60"
+                Height="22"
+                FontWeight="DemiBold"
+                Foreground="White"
+                Click="Button2_Click"
+                Content="Copy">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="3"/>
+                    </Style>
+                </Button.Resources>
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Background" Value="#B05010"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <Border Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#C06010"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#A04000"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <RichTextBox Grid.Row="2"
+                Margin="10 3 3 5"
+                Padding="0 2 0 0"
+                x:Name="ArrayResultBox"
+                IsReadOnly="True"
+                SelectionChanged="rtb_SelectionChanged"
+                FontFamily="Cascadia Mono"
+                FontSize="12">
+                <RichTextBox.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="3"/>
+                    </Style>
+                </RichTextBox.Resources>
+            </RichTextBox>
+        </Grid>
     </Grid>
 </UserControl>

@@ -240,7 +240,7 @@
                                 Header="LED 7 Seg"
                                 Click="MenuItem_Click">
                                 <MenuItem.Icon>
-                                    <Image Source="/Bits;component/Images/led7.png"
+                                    <Image Source="/Bits;component/Images/led7_icon.png"
                                         RenderOptions.BitmapScalingMode="HighQuality"
                                         RenderOptions.EdgeMode="Aliased">
                                     </Image>

@@ -21,6 +21,15 @@
     <None Remove="Images\info_icon.png" />
     <None Remove="Images\key_icon.png" />
     <None Remove="Images\led7.png" />
+    <None Remove="Images\led7_a.png" />
+    <None Remove="Images\led7_b.png" />
+    <None Remove="Images\led7_c.png" />
+    <None Remove="Images\led7_d.png" />
+    <None Remove="Images\led7_dp.png" />
+    <None Remove="Images\led7_e.png" />
+    <None Remove="Images\led7_f.png" />
+    <None Remove="Images\led7_g.png" />
+    <None Remove="Images\led7_icon.png" />
     <None Remove="Images\math_icon.png" />
   </ItemGroup>
 
@@ -38,6 +47,15 @@
     <Resource Include="Images\info_icon.png" />
     <Resource Include="Images\key_icon.png" />
     <Resource Include="Images\led7.png" />
+    <Resource Include="Images\led7_a.png" />
+    <Resource Include="Images\led7_b.png" />
+    <Resource Include="Images\led7_c.png" />
+    <Resource Include="Images\led7_d.png" />
+    <Resource Include="Images\led7_dp.png" />
+    <Resource Include="Images\led7_e.png" />
+    <Resource Include="Images\led7_f.png" />
+    <Resource Include="Images\led7_g.png" />
+    <Resource Include="Images\led7_icon.png" />
     <Resource Include="Images\math_icon.png" />
   </ItemGroup>
 
