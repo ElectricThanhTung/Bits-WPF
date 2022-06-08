@@ -4,12 +4,13 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Threading;
+using System.Windows.Media.Animation;
 
 namespace Bits {
     public partial class MainWindow : Window {
-        private bool WindowShown = false;
-        private bool RegisterEventEnabled = true;
         private BitsWindowAnimation windowAnimation;
+        private int featureIndex = 0;
+        private bool menuIsShow = false;
 
         enum ZoomAnimationMode {
             OpenWindow = 0,
@@ -20,45 +21,40 @@ namespace Bits {
 
         public MainWindow() {
             InitializeComponent();
+            Menu.Width = 0;
             windowAnimation = new BitsWindowAnimation(this);
-            expression_textbox.Width = 394;
-            this.ContentRendered += Window_ContentRendered;
-            Thread CalculationProcess = new Thread(CalculationHandler);
-            CalculationProcess.IsBackground = true;
-            CalculationProcess.Start();
         }
 
-        private void Window_ContentRendered(object? sender, EventArgs e) {
-            if(!WindowShown) {
-                WindowShown = true;
-                expression_textbox.MaxWidth = expression_textbox.ActualWidth;
-                interger_textbox.MaxWidth = interger_textbox.ActualWidth;
-                hex_textbox.MaxWidth = hex_textbox.ActualWidth;
-                result_textblock.MaxWidth = result_textblock.ActualWidth;
+        private int CurrentFeature {
+            get {
+                return featureIndex;
             }
-        }
+            set {
+                if(featureIndex != value) {
+                    int oldValue = featureIndex;
+                    featureIndex = value;
+                    Thread thread = new Thread(delegate () {
+                        int N = 30;
+                        int N_1 = N - 1;
+                        double target = -181 * value;
+                        double currTop = 0;
+                        this.Dispatcher.Invoke(new Action(() => {
+                            currTop = FeatureView.Margin.Top;
+                        }));
+                        for(int i = 0; i < N; i++) {
+                            this.Dispatcher.Invoke(new Action(() => {
+                                FeatureView.Margin = new Thickness(FeatureView.Margin.Left, currTop + (target - currTop) * i / N_1, FeatureView.Margin.Right, FeatureView.Margin.Bottom);
+                            }));
+                            Thread.Sleep(200 / N);
+                        }
+                    });
+                    thread.IsBackground = true;
+                    thread.Start();
 
-        private void Register_ValueChanged(object sender) {
-            if(RegisterEventEnabled) {
-                uint value = reg0.Value;
-                value |= (uint)reg1.Value << 8;
-                value |= (uint)reg2.Value << 16;
-                value |= (uint)reg3.Value << 24;
-                expression_textbox.Text = value.ToString();
-                expression_textbox.SelectionStart = expression_textbox.Text.Length;
+                    ((MenuItem)Menu.Items[oldValue]).Template = Menu.Resources["MenuItemStyle"] as ControlTemplate;
+                    ((MenuItem)Menu.Items[value]).Template = Menu.Resources["MenuItemSelectedStyle"] as ControlTemplate;
+                }
             }
-        }
-
-        private void TextBlock_MouseDown(object sender, MouseEventArgs e) {
-            ClrResult();
-        }
-
-        private void TextBlock_MouseEnter(object sender, MouseEventArgs e) {
-            ((TextBlock)sender).Foreground = Brushes.Red;
-        }
-
-        private void TextBlock_MouseLeave(object sender, MouseEventArgs e) {
-            ((TextBlock)sender).Foreground = Brushes.Blue;
         }
 
         private void Button_CloseWindows(object sender, RoutedEventArgs e) {
@@ -69,131 +65,89 @@ namespace Bits {
             this.WindowState = WindowState.Minimized;
         }
 
-        private void ClrResult() {
-            this.Dispatcher.BeginInvoke(() => {
-                interger_textbox.Text = "";
-                hex_textbox.Text = "";
-                expression_textbox.Text = "";
-                result_textblock.Text = "0";
-                result_textblock.Foreground = Brushes.Blue;
-                RegisterEventEnabled = false;
-                reg0.Value = 0;
-                reg1.Value = 0;
-                reg2.Value = 0;
-                reg3.Value = 0;
-                binary_text_0.Text = Calculator.ByteToBIN(reg0.Value);
-                binary_text_1.Text = Calculator.ByteToBIN(reg1.Value);
-                binary_text_2.Text = Calculator.ByteToBIN(reg2.Value);
-                binary_text_3.Text = Calculator.ByteToBIN(reg3.Value);
-                RegisterEventEnabled = true;
-            });
-        }
-
-        private void ShowResult(decimal value, bool updateExpression) {
-            this.Dispatcher.BeginInvoke(() => {
-                System.Numerics.BigInteger interger = (System.Numerics.BigInteger)value;
-                interger_textbox.Text = interger.ToString();
-                interger &= 0xFFFFFFFFFFFFFFFF;
-                ulong uint64 = (ulong)interger;
-                hex_textbox.Text = "0x" + Calculator.IntToHex(uint64);
-                result_textblock.Cursor = Cursors.IBeam;
-                result_textblock.Foreground = Brushes.Blue;
-                result_textblock.Text = ((value % 1) == 0) ? interger_textbox.Text : value.ToString();
-                if(updateExpression) {
-                    expression_textbox.Text = result_textblock.Text;
-                    expression_textbox.SelectionStart = expression_textbox.Text.Length;
-                }
-                RegisterEventEnabled = false;
-                reg0.Value = (byte)(((uint64) >> 0) & 0xFF);
-                reg1.Value = (byte)(((uint64) >> 8) & 0xFF);
-                reg2.Value = (byte)(((uint64) >> 16) & 0xFF);
-                reg3.Value = (byte)(((uint64) >> 24) & 0xFF);
-                binary_text_0.Text = Calculator.ByteToBIN(reg0.Value);
-                binary_text_1.Text = Calculator.ByteToBIN(reg1.Value);
-                binary_text_2.Text = Calculator.ByteToBIN(reg2.Value);
-                binary_text_3.Text = Calculator.ByteToBIN(reg3.Value);
-                RegisterEventEnabled = true;
-            });
-        }
-
-        private void CalculationHandler() {
-            string oldStr = "";
-            string newStr = "";
-            expression_textbox.Dispatcher.Invoke(() => {
-                oldStr = expression_textbox.Text;
-            });
-            while(true) {
-                try {
-                    do {
-                        this.Dispatcher.Invoke(() => {
-                            newStr = expression_textbox.Text;
-                        });
-                        Thread.Sleep(50);
-                    } while(oldStr == newStr);
-                    oldStr = newStr;
-                    if(oldStr.Trim() == "") {
-                        ClrResult();
-                        continue;
-                    }
-                    ShowResult(Calculator.Decimal(oldStr), false);
-                }
-                catch {
-                    try {
-                        this.Dispatcher.BeginInvoke(() => {
-                            result_textblock.Cursor = Cursors.Arrow;
-                            result_textblock.Text = "Invalid expression";
-                            result_textblock.Foreground = Brushes.Red;
-                        });
-                    }
-                    catch {
-
-                    }
-                }
-            }
-        }
-
         private void CheckBox_Changed(object sender, RoutedEventArgs e) {
             bool? topmost = ((CheckBox)sender).IsChecked;
             this.Topmost = (topmost == null || topmost == false) ? false : true;
         }
 
-        private void expression_textbox_KeyDown(object sender, KeyEventArgs e) {
-            if(e.Key == Key.Enter) {
-                try {
-                    ShowResult(Calculator.Decimal(expression_textbox.Text), true);
-                }
-                catch {
-
-                }
-            }
-        }
-
-        private void result_textblock_SelectionChanged(object sender, RoutedEventArgs e) {
-            if(result_textblock.Foreground != Brushes.Blue)
-                if(result_textblock.SelectionLength != 0)
-                    result_textblock.SelectionLength = 0;
-        }
-
         private void Window_Deactivated(object? sender, EventArgs e) {
             if(this.Topmost) {
-                if(this.WindowState != WindowState.Minimized)
+                if(this.WindowState != WindowState.Minimized) {
                     this.Opacity = 0.6D;
+                }
                 else
                     this.Opacity = 0D;
             }
         }
 
-        private void expression_textbox_ScrollChanged(object sender, ScrollChangedEventArgs e) {
-            if(expression_textbox.HorizontalOffset == 0)
-                expression_textbox.Padding = new Thickness(-3, 3, 0, 3);
-            else
-                expression_textbox.Padding = new Thickness(2, 3, 0, 3);
-        }
-
-        private void TextBlock_MouseUp(object sender, MouseButtonEventArgs e) {
+        private void ShowInfomation() {
             Info info = new Info();
             info.Owner = this;
             info.ShowDialog();
+        }
+
+        private void ShowMenu(bool isShow) {
+            if(menuIsShow == isShow)
+                return;
+            menuIsShow = isShow;
+            DoubleAnimation myDoubleAnimation = new DoubleAnimation();
+            if(!isShow) {
+                myDoubleAnimation.From = 100;
+                myDoubleAnimation.To = 0;
+            }
+            else {
+                myDoubleAnimation.From = 0;
+                myDoubleAnimation.To = 100;
+            }
+            myDoubleAnimation.Duration = new Duration(TimeSpan.FromMilliseconds(200));
+            Storyboard.SetTargetName(myDoubleAnimation, "Menu");
+            Storyboard.SetTargetProperty(myDoubleAnimation, new PropertyPath("Width"));
+
+            Storyboard myStoryboard = new Storyboard();
+            myStoryboard.Children.Add(myDoubleAnimation);
+
+            myStoryboard.Begin(this);
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e) {
+            if(sender == Menu.Items[Menu.Items.Count - 1]) {
+                ShowMenu(false);
+                bool topmodOld = Topmost;
+                Topmost = false;
+                ShowInfomation();
+                Topmost = topmodOld;
+            }
+            else {
+                for(int i = 0; i < (Menu.Items.Count - 1); i++) {
+                    if(sender == Menu.Items[i]) {
+                        CurrentFeature = i;
+                        break;
+                    }
+                }
+            }
+        }
+
+        private bool CheckMouseInControl(Point point, FrameworkElement control) {
+            Point relativePoint = control.TransformToAncestor(this).Transform(new Point(0, 0));
+            if(point.X < relativePoint.X || point.X > (relativePoint.X + control.ActualWidth))
+                return false;
+            if(point.Y < relativePoint.Y || point.Y > (relativePoint.Y + control.ActualHeight))
+                return false;
+            return true;
+        }
+
+        private void Grid_PreviewMouseMove(object sender, MouseEventArgs e) {
+            Point point = e.GetPosition(this);
+            bool shown = false;
+            if(CheckMouseInControl(point, MenuButton)) {
+                shown = true;
+                ShowMenu(true);
+            }
+            else {
+                shown |= CheckMouseInControl(point, Menu);
+                if(!shown)
+                    ShowMenu(false);
+            }
         }
     }
 }

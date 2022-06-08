@@ -12,6 +12,7 @@
     SizeToContent="WidthAndHeight"
     FontFamily="Microsoft Sans Serif"
     WindowStartupLocation="CenterScreen"
+    Deactivated="Window_Deactivated"
     UseLayoutRounding="True"
     Title="Bits">
     <!--<Window.Effect>
@@ -20,7 +21,7 @@
     <WindowChrome.WindowChrome>
         <WindowChrome GlassFrameThickness="0" CornerRadius="0" CaptionHeight="0" UseAeroCaptionButtons="False" ResizeBorderThickness="7"/>
     </WindowChrome.WindowChrome>
-    <Grid>
+    <Grid PreviewMouseMove="Grid_PreviewMouseMove">
         <Border Background="Purple" CornerRadius="6">
             <Grid HorizontalAlignment="Center">
                 <Grid.Clip>
@@ -31,11 +32,23 @@
                     <RowDefinition></RowDefinition>
                 </Grid.RowDefinitions>
                 <StackPanel Orientation="Horizontal"
+                    x:Name="MenuButton"
+                    Margin="2 0 0 0"
                     Grid.Row="0"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Left">
+                    <StackPanel.Style>
+                        <Style TargetType="{x:Type StackPanel}">
+                            <Setter Property="Background" Value="Purple"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#B000B0"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
                     <Image Source="/Bits;component/Images/bits_icon.png"
-                        Margin="4 0 0 0"
+                        Margin="1 3 0 3"
                         RenderOptions.BitmapScalingMode="HighQuality"
                         RenderOptions.EdgeMode="Aliased"
                         Width="22"
@@ -43,7 +56,7 @@
                     </Image>
                     <TextBlock Text="Bits"
                         Grid.Row="0"
-                        Margin="5 0 0 0"
+                        Margin="5 0 10 0"
                         FontWeight="Bold"
                         FontSize="13"
                         Foreground="White"
@@ -119,344 +132,171 @@
                         </Button.Style>
                     </Button>
                 </StackPanel>
-                <StackPanel Margin="2 0 2 2"
-                    Grid.Row="1"
-                    Background="White">
-                    <StackPanel Orientation="Horizontal" Margin="0 3 0 3">
-                        <StackPanel HorizontalAlignment="Center" Margin="5 0 5 0">
-                            <StackPanel Orientation="Horizontal" Margin="0 0 0 2">
-                                <TextBlock Text="Byte 3:"
-                                    FontSize="11"
-                                    Padding="0">
-                                </TextBlock>
-                                <TextBlock Text="00000000"
-                                    x:Name="binary_text_3"
-                                    Padding="0"
-                                    FontSize="11"
-                                    Margin="5 0 0 0"
-                                    Foreground="Green">
-                                </TextBlock>
-                            </StackPanel>
-                            <local:Register x:Name="reg3"
-                                Cursor="Hand"
-                                BitOffset="24"
-                                ValueChanged="Register_ValueChanged"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Top"
-                                Height="23" Width="192">
-                            </local:Register>
-                        </StackPanel>
-                        <StackPanel HorizontalAlignment="Center" Margin="5 0 5 0">
-                            <StackPanel Orientation="Horizontal" Margin="0 0 0 2">
-                                <TextBlock Text="Byte 2:"
-                                    FontSize="11"
-                                    Padding="0">
-                                </TextBlock>
-                                <TextBlock Text="00000000"
-                                    x:Name="binary_text_2"
-                                    Padding="0"
-                                    FontSize="11"
-                                    Margin="5 0 0 0"
-                                    Foreground="Green">
-                                </TextBlock>
-                            </StackPanel>
-                            <local:Register x:Name="reg2"
-                                Cursor="Hand"
-                                BitOffset="16"
-                                ValueChanged="Register_ValueChanged"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Top"
-                                Height="23" Width="192">
-                            </local:Register>
-                        </StackPanel>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0 3 0 3">
-                        <StackPanel HorizontalAlignment="Center" Margin="5 0 5 0">
-                            <StackPanel Orientation="Horizontal" Margin="0 0 0 2">
-                                <TextBlock Text="Byte 1:"
-                                    FontSize="11"
-                                    Padding="0">
-                                </TextBlock>
-                                <TextBlock Text="00000000"
-                                    x:Name="binary_text_1"
-                                    Padding="0"
-                                    FontSize="11"
-                                    Margin="5 0 0 0"
-                                    Foreground="Green">
-                                </TextBlock>
-                            </StackPanel>
-                            <local:Register x:Name="reg1"
-                                Cursor="Hand"
-                                BitOffset="8"
-                                ValueChanged="Register_ValueChanged"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Top"
-                                Height="23" Width="192">
-                            </local:Register>
-                        </StackPanel>
-                        <StackPanel HorizontalAlignment="Center" Margin="5 0 5 0">
-                            <StackPanel Orientation="Horizontal" Margin="0 0 0 2">
-                                <TextBlock Text="Byte 0:"
-                                    FontSize="11"
-                                    Padding="0">
-                                </TextBlock>
-                                <TextBlock Text="00000000"
-                                    x:Name="binary_text_0"
-                                    Padding="0"
-                                    FontSize="11"
-                                    Margin="5 0 0 0"
-                                    Foreground="Green">
-                                </TextBlock>
-                            </StackPanel>
-                            <local:Register x:Name="reg0"
-                                Cursor="Hand"
-                                BitOffset="0"
-                                ValueChanged="Register_ValueChanged"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Top"
-                                Height="23" Width="192">
-                            </local:Register>
-                        </StackPanel>
-                    </StackPanel>
-                    <TextBlock
-                        RenderTransformOrigin="1 0"
-                        Text="Clear"
-                        Padding="0"
-                        FontSize="11"
-                        Margin="0 0 5 0"
-                        Foreground="Blue"
-                        Cursor="Hand"
-                        HorizontalAlignment="Right"
-                        MouseDown="TextBlock_MouseDown"
-                        MouseEnter="TextBlock_MouseEnter"
-                        MouseLeave="TextBlock_MouseLeave">
-                        <TextBlock.Resources>
-                            <Style TargetType="TextBlock">
-                                <Setter
-                                    Property="RenderTransform">
-                                    <Setter.Value>
-                                        <ScaleTransform x:Name="transform"></ScaleTransform>
-                                    </Setter.Value>
-                                </Setter>
-                                <Style.Triggers>
-                                    <EventTrigger RoutedEvent="MouseDown">
-                                        <BeginStoryboard>
-                                            <Storyboard>
-                                                <DoubleAnimation Duration="00:00:00.05"
-                                                    Storyboard.TargetProperty="RenderTransform.ScaleX"
-                                                    To="1.05">
-                                                </DoubleAnimation>
-                                                <DoubleAnimation Duration="00:00:00.05"
-                                                    Storyboard.TargetProperty="RenderTransform.ScaleY"
-                                                    To="1.05">
-                                                </DoubleAnimation>
-                                            </Storyboard>
-                                        </BeginStoryboard>
-                                    </EventTrigger>
-                                    <EventTrigger RoutedEvent="MouseUp">
-                                        <BeginStoryboard>
-                                            <Storyboard>
-                                                <DoubleAnimation Duration="00:00:00.05"
-                                                    Storyboard.TargetProperty="RenderTransform.ScaleX"
-                                                    To="1.1">
-                                                </DoubleAnimation>
-                                                <DoubleAnimation Duration="00:00:00.05"
-                                                    Storyboard.TargetProperty="RenderTransform.ScaleY"
-                                                    To="1.1">
-                                                </DoubleAnimation>
-                                            </Storyboard>
-                                        </BeginStoryboard>
-                                    </EventTrigger>
-                                    <EventTrigger RoutedEvent="MouseEnter">
-                                        <BeginStoryboard>
-                                            <Storyboard>
-                                                <DoubleAnimation Duration="00:00:00.10"
-                                                    Storyboard.TargetProperty="RenderTransform.ScaleX"
-                                                    To="1.1">
-                                                </DoubleAnimation>
-                                                <DoubleAnimation Duration="00:00:00.10"
-                                                    Storyboard.TargetProperty="RenderTransform.ScaleY"
-                                                    To="1.1">
-                                                </DoubleAnimation>
-                                            </Storyboard>
-                                        </BeginStoryboard>
-                                    </EventTrigger>
-                                    <EventTrigger RoutedEvent="MouseLeave">
-                                        <BeginStoryboard>
-                                            <Storyboard>
-                                                <DoubleAnimation Duration="00:00:00.20"
-                                                    Storyboard.TargetProperty="RenderTransform.ScaleX"
-                                                    To="1">
-                                                </DoubleAnimation>
-                                                <DoubleAnimation Duration="00:00:00.20"
-                                                    Storyboard.TargetProperty="RenderTransform.ScaleY"
-                                                    To="1">
-                                                </DoubleAnimation>
-                                            </Storyboard>
-                                        </BeginStoryboard>
-                                    </EventTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBlock.Resources>
-                    </TextBlock>
-                    <Grid Margin="5 0 5 2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="Expression:"></TextBlock>
-                        <TextBox Grid.Column="1" Text="0"
-                            x:Name="result_textblock"
-                            Margin="5 0 40 0"
-                            BorderThickness="0"
-                            SelectionChanged="result_textblock_SelectionChanged"
-                            IsReadOnly="True"
-                            Foreground="Blue">
-                        </TextBox>
+                <StackPanel Grid.Row="1" Width="408" Orientation="Horizontal">
+                    <Grid Width="Auto">
+                        <Menu x:Name="Menu" Width="100" Margin="2 0 -2 0"
+                            Background="#600060">
+                            <Menu.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <VirtualizingStackPanel Orientation="Vertical"/>
+                                </ItemsPanelTemplate>
+                            </Menu.ItemsPanel>
+                            <Menu.Resources>
+                                <ControlTemplate x:Key="MenuItemStyle" TargetType="{x:Type MenuItem}">
+                                    <Border x:Name="border"
+                                        BorderThickness="0"
+                                        Height="25">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="24"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <ContentPresenter x:Name="Icon"
+                                                ContentSource="Icon"
+                                                HorizontalAlignment="Left"
+                                                Height="16"
+                                                Width="16"
+                                                Margin="2 0 0 0"
+                                                VerticalAlignment="Center" />
+                                            <ContentPresenter ContentSource="Header"
+                                                Grid.Column="1"
+                                                TextBlock.Foreground="#FFFFFF"
+                                                TextBlock.FontFamily="Microsoft Sans Serif"
+                                                TextBlock.FontSize="13"
+                                                TextBlock.FontWeight="Medium"
+                                                HorizontalAlignment="Left"
+                                                RecognizesAccessKey="True"
+                                                Margin="2 0 0 0"
+                                                VerticalAlignment="Center">
+                                            </ContentPresenter>
+                                        </Grid>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <!--<Trigger Property="Icon" Value="{x:Null}">
+                                            <Setter Property="Visibility" TargetName="Icon" Value="Visible" />
+                                        </Trigger>
+                                        <Trigger Property="IsChecked" Value="True">
+                                            <Setter Property="Visibility" TargetName="Icon" Value="Visible" />
+                                        </Trigger>-->
+                                        <Trigger Property="IsHighlighted" Value="True">
+                                            <Setter Property="Background" TargetName="border" Value="#603060" />
+                                            <Setter Property="BorderBrush" TargetName="border" Value="#603060" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                                <ControlTemplate x:Key="MenuItemSelectedStyle" TargetType="{x:Type MenuItem}">
+                                    <Border x:Name="border"
+                                        BorderThickness="0"
+                                        Background="#751075"
+                                        Height="25">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="24"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <ContentPresenter x:Name="Icon"
+                                                ContentSource="Icon"
+                                                HorizontalAlignment="Left"
+                                                Height="16"
+                                                Width="16"
+                                                Margin="2 0 0 0"
+                                                VerticalAlignment="Center" />
+                                            <ContentPresenter ContentSource="Header"
+                                                Grid.Column="1"
+                                                TextBlock.Foreground="#FFFFFF"
+                                                TextBlock.FontFamily="Microsoft Sans Serif"
+                                                TextBlock.FontSize="13"
+                                                TextBlock.FontWeight="Medium"
+                                                HorizontalAlignment="Left"
+                                                RecognizesAccessKey="True"
+                                                Margin="2 0 0 0"
+                                                VerticalAlignment="Center">
+                                            </ContentPresenter>
+                                        </Grid>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsHighlighted" Value="True">
+                                            <Setter Property="Background" TargetName="border" Value="#603060" />
+                                            <Setter Property="BorderBrush" TargetName="border" Value="#603060" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Menu.Resources>
+                            <MenuItem Template="{StaticResource MenuItemSelectedStyle}"
+                                Padding="0"
+                                Height="25"
+                                Header="Calculator"
+                                Click="MenuItem_Click">
+                                <MenuItem.Icon>
+                                    <Image Source="/Bits;component/Images/math_icon.png"
+                                        RenderOptions.BitmapScalingMode="HighQuality"
+                                        RenderOptions.EdgeMode="Aliased">
+                                    </Image>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Template="{StaticResource MenuItemStyle}"
+                                Padding="0"
+                                Height="25"
+                                Header="LED 7 Seg"
+                                Click="MenuItem_Click">
+                                <MenuItem.Icon>
+                                    <Image Source="/Bits;component/Images/led7_icon.png"
+                                        RenderOptions.BitmapScalingMode="HighQuality"
+                                        RenderOptions.EdgeMode="Aliased">
+                                    </Image>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Template="{StaticResource MenuItemStyle}"
+                                Padding="0"
+                                Height="25"
+                                Header="RSA Key"
+                                Click="MenuItem_Click">
+                                <MenuItem.Icon>
+                                    <Image Source="/Bits;component/Images/key_icon.png"
+                                        RenderOptions.BitmapScalingMode="HighQuality"
+                                        RenderOptions.EdgeMode="Aliased">
+                                    </Image>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Template="{StaticResource MenuItemStyle}"
+                                Padding="0"
+                                Height="25"
+                                Header="Infomation"
+                                Click="MenuItem_Click">
+                                <MenuItem.Icon>
+                                    <Image Source="/Bits;component/Images/info_icon.png"
+                                        RenderOptions.BitmapScalingMode="HighQuality"
+                                        RenderOptions.EdgeMode="Aliased">
+                                    </Image>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </Menu>
                     </Grid>
-                    <local:CustomTextBox Height="24"
-                        x:Name="expression_textbox"
-                        SelectionBrush="Blue"
-                        FontSize="14"
-                        VerticalContentAlignment="Center"
-                        BorderBrush="DimGray"
-                        Margin="5 0 5 5"
-                        ScrollViewer.ScrollChanged="expression_textbox_ScrollChanged"
-                        KeyDown="expression_textbox_KeyDown">
-                    </local:CustomTextBox>
-                    <Grid Margin="5 0 5 0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition></ColumnDefinition>
-                            <ColumnDefinition></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
+                    <Grid Background="White"
+                        Margin="2 0 2 2"
+                        Height="207">
+                        <Grid.Clip>
+                            <RectangleGeometry Rect="0 0 404 207"/>
+                        </Grid.Clip>
                         <Grid.RowDefinitions>
-                            <RowDefinition></RowDefinition>
-                            <RowDefinition></RowDefinition>
+                            <RowDefinition Height="181"></RowDefinition>
                             <RowDefinition></RowDefinition>
                         </Grid.RowDefinitions>
-                        <TextBlock Text="Decimal result (Interger):"
-                            Grid.Row="0"
-                            Grid.Column="0"
-                            Margin="0 0 5 0">
-                        </TextBlock>
-                        <TextBox Height="24"
-                            x:Name="interger_textbox"
-                            Grid.Row="1"
-                            Grid.Column="0"
-                            Margin="0 0 5 0"
-                            SelectionBrush="Blue"
-                            FontSize="14"
-                            VerticalContentAlignment="Center"
-                            IsReadOnly="True"
-                            BorderBrush="DimGray">
-                        </TextBox>
-                        <TextBlock Text="Hexadecimal result (HEX):"
-                            Grid.Row="0"
-                            Grid.Column="1"
-                            Margin="5 0 0 0">
-                        </TextBlock>
-                        <TextBox Height="24"
-                            x:Name="hex_textbox"
-                            Grid.Row="1"
-                            Grid.Column="1"
-                            Margin="5 0 0 0"
-                            SelectionBrush="Blue"
-                            FontSize="14"
-                            VerticalContentAlignment="Center"
-                            IsReadOnly="True"
-                            BorderBrush="DimGray">
-                        </TextBox>
-                        <TextBlock Text="Information"
-                            RenderTransformOrigin="0 0.5"
-                            Cursor="Hand"
-                            Width="65"
-                            Margin="0 5 0 5"
-                            Grid.Row="2"
-                            Grid.Column="0"
-                            Foreground="Blue"
-                            HorizontalAlignment="Left"
-                            MouseUp="TextBlock_MouseUp"
-                            MouseEnter="TextBlock_MouseEnter"
-                            MouseLeave="TextBlock_MouseLeave">
-                            <TextBlock.Resources>
-                                <Style TargetType="TextBlock">
-                                    <Setter
-                                        Property="RenderTransform">
-                                        <Setter.Value>
-                                            <ScaleTransform x:Name="transform"></ScaleTransform>
-                                        </Setter.Value>
-                                    </Setter>
-                                    <Style.Triggers>
-                                        <EventTrigger RoutedEvent="MouseDown">
-                                            <BeginStoryboard>
-                                                <Storyboard>
-                                                    <DoubleAnimation Duration="00:00:00.05"
-                                                        Storyboard.TargetProperty="RenderTransform.ScaleX"
-                                                        To="1.05">
-                                                    </DoubleAnimation>
-                                                    <DoubleAnimation Duration="00:00:00.05"
-                                                        Storyboard.TargetProperty="RenderTransform.ScaleY"
-                                                        To="1.05">
-                                                    </DoubleAnimation>
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </EventTrigger>
-                                        <EventTrigger RoutedEvent="MouseUp">
-                                            <BeginStoryboard>
-                                                <Storyboard>
-                                                    <DoubleAnimation Duration="00:00:00.05"
-                                                        Storyboard.TargetProperty="RenderTransform.ScaleX"
-                                                        To="1.1">
-                                                    </DoubleAnimation>
-                                                    <DoubleAnimation Duration="00:00:00.05"
-                                                        Storyboard.TargetProperty="RenderTransform.ScaleY"
-                                                        To="1.1">
-                                                    </DoubleAnimation>
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </EventTrigger>
-                                        <EventTrigger RoutedEvent="MouseEnter">
-                                            <BeginStoryboard>
-                                                <Storyboard>
-                                                    <DoubleAnimation Duration="00:00:00.10"
-                                                        Storyboard.TargetProperty="RenderTransform.ScaleX"
-                                                        To="1.1">
-                                                    </DoubleAnimation>
-                                                    <DoubleAnimation Duration="00:00:00.10"
-                                                        Storyboard.TargetProperty="RenderTransform.ScaleY"
-                                                        To="1.1">
-                                                    </DoubleAnimation>
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </EventTrigger>
-                                        <EventTrigger RoutedEvent="MouseLeave">
-                                            <BeginStoryboard>
-                                                <Storyboard>
-                                                    <DoubleAnimation Duration="00:00:00.20"
-                                                        Storyboard.TargetProperty="RenderTransform.ScaleX"
-                                                        To="1">
-                                                    </DoubleAnimation>
-                                                    <DoubleAnimation Duration="00:00:00.20"
-                                                        Storyboard.TargetProperty="RenderTransform.ScaleY"
-                                                        To="1">
-                                                    </DoubleAnimation>
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </EventTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Resources>
-                        </TextBlock>
+                        <StackPanel x:Name="FeatureView" Width="404" Orientation="Vertical" Margin="0 0 0 0">
+                            <local:CalcInterface Height="181"/>
+                            <local:LED7Interface Height="181"/>
+                            <local:RSAKeyInterface Height="181"/>
+                        </StackPanel>
                         <CheckBox Content="Always on top"
-                            VerticalContentAlignment="Center"
-                            Margin="0 5 0 5"
-                            Grid.Row="2"
-                            Grid.Column="1"
-                            Cursor="Hand"
-                            BorderBrush="Black"
-                            HorizontalAlignment="Right"
-                            Checked="CheckBox_Changed"
-                            Unchecked="CheckBox_Changed">
+				            VerticalContentAlignment="Center"
+				            Margin="4 5 5 0"
+				            Grid.Row="1"
+				            Cursor="Hand"
+				            BorderBrush="Black"
+                            VerticalAlignment="Top"
+				            HorizontalAlignment="Left"
+				            Checked="CheckBox_Changed"
+				            Unchecked="CheckBox_Changed">
                         </CheckBox>
                     </Grid>
                 </StackPanel>
