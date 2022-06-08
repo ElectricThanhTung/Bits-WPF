@@ -39,11 +39,12 @@ namespace Bits {
             }
         }
 
-        private void ClrResult() {
+        private void ClrResult(bool clearExpression) {
             this.Dispatcher.BeginInvoke(() => {
                 interger_textbox.Text = "";
                 hex_textbox.Text = "";
-                expression_textbox.Text = "";
+                if(clearExpression)
+                    expression_textbox.Text = "";
                 result_textblock.Text = "0";
                 result_textblock.Foreground = Brushes.Blue;
                 RegisterEventEnabled = false;
@@ -102,7 +103,7 @@ namespace Bits {
                     } while(oldStr == newStr);
                     oldStr = newStr;
                     if(oldStr.Trim() == "") {
-                        ClrResult();
+                        ClrResult(false);
                         continue;
                     }
                     ShowResult(Calculator.Decimal(oldStr), false);
@@ -131,7 +132,7 @@ namespace Bits {
         }
 
         private void TextBlock_MouseDown(object sender, MouseEventArgs e) {
-            ClrResult();
+            ClrResult(true);
         }
 
         private void expression_textbox_KeyDown(object sender, KeyEventArgs e) {

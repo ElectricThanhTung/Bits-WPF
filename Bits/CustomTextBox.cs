@@ -40,14 +40,14 @@ namespace Bits {
 
         public int SelectionStart {
             get {
-                return this.Document.ContentStart.GetOffsetToPosition(this.CaretPosition);
+                return new TextRange(this.Document.ContentStart, this.CaretPosition).Text.Length;
             }
             set {
                 int index = value;
                 try {
                     while(true) {
                         this.CaretPosition = this.Document.ContentStart.GetPositionAtOffset(index);
-                        if(this.CaretPosition.LogicalDirection == LogicalDirection.Forward || this.Document.ContentStart.GetOffsetToPosition(this.CaretPosition) < value)
+                        if(new TextRange(this.Document.ContentStart, this.CaretPosition).Text.Length < value)
                             index++;
                         else
                             break;
