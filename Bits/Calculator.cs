@@ -312,6 +312,7 @@ namespace Bits {
 
             List<StringBuilder> temp;
             Stack<StringBuilder> stack = new Stack<StringBuilder>();
+            CheckSyntax(expression);
             StringBuilder exp = Normalization(new StringBuilder(expression));
             temp = SeparationOfExpressions(exp);
             ConvertAllToInt(temp);
@@ -401,6 +402,15 @@ namespace Bits {
                 if(str == Operator1[i])
                     return 1;
             return 0;
+        }
+
+        private static void CheckSyntax(string expression) {
+            if(Regex.Match(expression, @"\d+\s*I").Value != "")
+                throw new Exception("Invalid expression");
+            else if(Regex.Match(expression, @"[^<]<[^<]").Value != "")
+                throw new Exception("Invalid expression");
+            else if(Regex.Match(expression, @"[^>]>[^>]").Value != "")
+                throw new Exception("Invalid expression");
         }
 
         private static StringBuilder Normalization(StringBuilder expression) {
