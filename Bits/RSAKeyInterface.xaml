@@ -4,8 +4,187 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Bits"
+             FontSize="13"
              mc:Ignorable="d">
     <Grid Background="White">
-        <TextBlock FontSize="20" Text="RSA Key Generator"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <StackPanel Margin="5 2 0 0" Grid.Row="0" Orientation="Horizontal">
+            <TextBlock Text="Key size:" VerticalAlignment="Center"/>
+            <ComboBox x:Name="bit_size_combobox"
+                Width="60"
+                Height="23"
+                SelectedIndex="5"
+                Margin="5 0 0 0"
+                Foreground="DarkBlue"
+                VerticalContentAlignment="Center">
+                <ComboBoxItem Content="32"/>
+                <ComboBoxItem Content="56"/>
+                <ComboBoxItem Content="128"/>
+                <ComboBoxItem Content="256"/>
+                <ComboBoxItem Content="512"/>
+                <ComboBoxItem Content="1024"/>
+                <ComboBoxItem Content="2048"/>
+            </ComboBox>
+            <TextBlock Text="Display:" Margin="8 0 0 0" VerticalAlignment="Center"/>
+            <ComboBox x:Name="display_combobox"
+                Width="80"
+                Height="23"
+                SelectedIndex="1"
+                Margin="5 0 0 0"
+                Foreground="DarkBlue"
+                VerticalContentAlignment="Center">
+                <ComboBoxItem Content="Decimal"/>
+                <ComboBoxItem Content="Hexa"/>
+            </ComboBox>
+            <Button x:Name="generate_button"
+                Content="Generate"
+                Margin="7 0 0 0"
+                Width="65"
+                FontWeight="DemiBold"
+                Foreground="White"
+                Click="Button_Click">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="2"/>
+                    </Style>
+                </Button.Resources>
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Background" Value="#B05010"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <Border Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#C06010"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#A04000"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </StackPanel>
+        <Grid Grid.Row="1" Margin="0 1 0 0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Orientation="Vertical" Margin="5 0 0 0">
+                <TextBlock Text="Prime number (p):" FontSize="11" Margin="0 0 0 2"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBox x:Name="p_prime"
+                        Grid.Column="0"
+                        FontFamily="Cascadia Mono"
+                        Height="32"
+                        IsReadOnly="True"
+                        TextWrapping="Wrap"
+                        Foreground="#006400">
+                        <TextBox.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="3"/>
+                            </Style>
+                        </TextBox.Resources>
+                    </TextBox>
+                    <TextBlock Grid.Column="1" Text="*" VerticalAlignment="Center" FontSize="16" FontWeight="Bold" Margin="2 0 2 0"/>
+                </Grid>
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Vertical">
+                <TextBlock Text="Prime number (q):" FontSize="11" Margin="0 0 0 2"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBox x:Name="q_prime"
+                        Grid.Column="0"
+                        FontFamily="Cascadia Mono"
+                        Height="32"
+                        IsReadOnly="True"
+                        TextWrapping="Wrap"
+                        Foreground="#006400">
+                        <TextBox.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="3"/>
+                            </Style>
+                        </TextBox.Resources>
+                    </TextBox>
+                    <TextBlock Grid.Column="1" Text="=" VerticalAlignment="Center" FontSize="16" FontWeight="Bold" Margin="2 0 2 0"/>
+                </Grid>
+            </StackPanel>
+            <StackPanel Grid.Column="2" Orientation="Vertical" Margin="0 0 5 0">
+                <TextBlock Text="Modulus (n):" FontSize="11" Margin="0 0 0 2"/>
+                <TextBox x:Name="modulus"
+                    FontFamily="Cascadia Mono"
+                    Height="32"
+                    IsReadOnly="True"
+                    TextWrapping="Wrap"
+                    Foreground="#006400">
+                    <TextBox.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="3"/>
+                        </Style>
+                    </TextBox.Resources>
+                </TextBox>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="2" Margin="5 1 5 0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0" Margin="0 0 0 2" Orientation="Horizontal">
+                <TextBlock Text="Private exponent (e):" FontSize="11" Margin="0 0 5 0"/>
+                <TextBlock x:Name="error_textblock" FontSize="11" Foreground="Red"></TextBlock>
+            </StackPanel>
+            <TextBox Grid.Row="1"
+                x:Name="public_exponent"
+                FontFamily="Cascadia Mono"
+                TextWrapping="Wrap"
+                Foreground="#006400">
+                <TextBox.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="3"/>
+                    </Style>
+                </TextBox.Resources>
+            </TextBox>
+        </Grid>
+        <Grid Grid.Row="3" Margin="5 1 5 1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="Private exponent (d):" FontSize="11" Margin="0 0 0 2"/>
+            <TextBox
+                Grid.Row="1"
+                x:Name="private_exponent"
+                FontFamily="Cascadia Mono"
+                TextWrapping="Wrap"
+                Foreground="#006400"
+                IsReadOnly="True">
+                <TextBox.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="3"/>
+                    </Style>
+                </TextBox.Resources>
+            </TextBox>
+        </Grid>
     </Grid>
 </UserControl>
