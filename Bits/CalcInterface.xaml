@@ -207,7 +207,7 @@
 			BorderBrush="DimGray"
 			Margin="5 0 5 5"
 			ScrollViewer.ScrollChanged="expression_textbox_ScrollChanged"
-			KeyDown="expression_textbox_KeyDown">
+            PreviewKeyDown="expression_textbox_KeyDown">
         </local:CustomTextBox>
         <Grid Margin="5 0 5 0">
             <Grid.ColumnDefinitions>
