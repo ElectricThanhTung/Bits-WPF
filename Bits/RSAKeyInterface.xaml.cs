@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Numerics;
 
 namespace Bits {
-    /// <summary>
-    /// Interaction logic for RSAKeyInterface.xaml
-    /// </summary>
     public partial class RSAKeyInterface : UserControl {
         private uint e;
         private BigInteger p;
