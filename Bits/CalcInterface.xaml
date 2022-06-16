@@ -5,9 +5,17 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 	xmlns:local="clr-namespace:Bits"
 	mc:Ignorable="d" >
-    <StackPanel
-		Background="White">
-        <StackPanel Orientation="Horizontal" Margin="0 3 0 3">
+    <Grid Background="White">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0 3 0 3">
             <StackPanel HorizontalAlignment="Center" Margin="5 0 5 0">
                 <StackPanel Orientation="Horizontal" Margin="0 0 0 2">
                     <TextBlock Text="Byte 3:"
@@ -55,7 +63,7 @@
                 </local:Register>
             </StackPanel>
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Margin="0 3 0 3">
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0 3 0 3">
             <StackPanel HorizontalAlignment="Center" Margin="5 0 5 0">
                 <StackPanel Orientation="Horizontal" Margin="0 0 0 2">
                     <TextBlock Text="Byte 1:"
@@ -103,7 +111,7 @@
                 </local:Register>
             </StackPanel>
         </StackPanel>
-        <TextBlock
+        <TextBlock Grid.Row="2"
 			RenderTransformOrigin="1 0"
 			Text="Clear"
 			Padding="0"
@@ -184,7 +192,7 @@
                 </Style>
             </TextBlock.Resources>
         </TextBlock>
-        <Grid Margin="5 0 5 2">
+        <Grid Grid.Row="3" Margin="5 0 5 2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
@@ -199,34 +207,36 @@
 				Foreground="Blue">
             </TextBox>
         </Grid>
-        <local:CustomTextBox Height="24"
-			x:Name="expression_textbox"
+        <local:CustomTextBox Grid.Row="4"
+            x:Name="expression_textbox"
 			SelectionBrush="Blue"
 			FontSize="14"
 			VerticalContentAlignment="Center"
 			BorderBrush="DimGray"
-			Margin="5 0 5 5"
+			Margin="5 0 5 0"
 			ScrollViewer.ScrollChanged="expression_textbox_ScrollChanged"
             PreviewKeyDown="expression_textbox_KeyDown">
         </local:CustomTextBox>
-        <Grid Margin="5 0 5 0">
+        <Grid Grid.Row="5" Margin="5 3 5 0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition></RowDefinition>
-                <RowDefinition></RowDefinition>
-                <RowDefinition></RowDefinition>
-            </Grid.RowDefinitions>
             <TextBlock Text="Decimal result (Interger):"
-				Grid.Row="0"
 				Grid.Column="0"
 				Margin="0 0 5 0">
             </TextBlock>
-            <TextBox Height="24"
-				x:Name="interger_textbox"
-				Grid.Row="1"
+            <TextBlock Text="Hexadecimal result (HEX):"
+				Grid.Column="1"
+				Margin="5 0 0 0">
+            </TextBlock>
+        </Grid>
+        <Grid Grid.Row="6" Margin="5 0 5 0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="interger_textbox"
 				Grid.Column="0"
 				Margin="0 0 5 0"
 				SelectionBrush="Blue"
@@ -235,14 +245,7 @@
 				IsReadOnly="True"
 				BorderBrush="DimGray">
             </TextBox>
-            <TextBlock Text="Hexadecimal result (HEX):"
-				Grid.Row="0"
-				Grid.Column="1"
-				Margin="5 0 0 0">
-            </TextBlock>
-            <TextBox Height="24"
-				x:Name="hex_textbox"
-				Grid.Row="1"
+            <TextBox x:Name="hex_textbox"
 				Grid.Column="1"
 				Margin="5 0 0 0"
 				SelectionBrush="Blue"
@@ -252,5 +255,5 @@
 				BorderBrush="DimGray">
             </TextBox>
         </Grid>
-    </StackPanel>
+    </Grid>
 </UserControl>
