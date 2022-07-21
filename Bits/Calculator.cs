@@ -10,23 +10,43 @@ namespace Bits {
         private static NumberFormatInfo provider = new NumberFormatInfo();
 
         public static long HexToInt(string hex) {
-            string temp = "";
+            int index = 0;
+            long value = 0;
+
             hex = hex.ToUpper().Replace("0X", "");
-            for(int i = 0; i < hex.Length; i++) {
-                temp += hex[i];
-                if(i != (hex.Length - 1))
-                    temp += ",";
+
+            if(hex[0] == '-' || hex[0] == '+')
+                index++;
+
+            for(int i = index; i < hex.Length; i++) {
+                value <<= 4;
+                if(hex[i] >= '0' && hex[i] <= '9')
+                    value |= (long)(hex[i] - '0');
+                else if(hex[i] >= 'A' && hex[i] <= 'F')
+                    value |= (long)(hex[i] - 'A' + 10);
+                else
+                    throw new Exception("Invalid hex number format");
             }
-            string hexchar = "ABCDEF";
-            for(int i = 0; i < hexchar.Length; i++)
-                temp = temp.Replace(hexchar[i] + "", (i + 10) + "");
-            string[] s = temp.Split(',');
-            long res = 0;
-            for(int i = 0; i < s.Length; i++) {
-                res *= 16;
-                res += Convert.ToInt16(s[i], provider);
+            if(hex[0] == '-')
+                return -value;
+            return value;
+        }
+
+        public static long BinToInt(string bin) {
+            long value = 0;
+            int index = 2;
+            if(bin[0] == '-' || bin[0] == '+')
+                index++;
+            for(int j = index; j < bin.Length; j++) {
+                value <<= 1;
+                if(bin[j] == '1')
+                    value |= 1;
+                else if(bin[j] != '0')
+                    throw new Exception("Invalid bin number format");
             }
-            return res;
+            if(bin[0] == '-')
+                return -value;
+            return value;
         }
 
         public static string IntToHex(ulong num) {
@@ -479,27 +499,51 @@ namespace Bits {
             return ret;
         }
 
+        private static bool IsHexNumber(StringBuilder str) {
+            int index = 0;
+            if(str[index] == '-' || str[index] == '+')
+                index++;
+            if(str[index] == '0' && (str[index + 1] == 'x' || str[index + 1] == 'X'))
+                return true;
+            return false;
+        }
+
+        private static bool IsCharacter(StringBuilder str) {
+            int index = 0;
+            int length = 3;
+            if(str[index] == '-' || str[index] == '+') {
+                index++;
+                length++;
+            }
+            if(str.Length == length && str[index] == '\'' && str[index + 2] == '\'')
+                return true;
+            return false;
+        }
+
+        private static bool IsBinNumber(StringBuilder str) {
+            int index = 0;
+            if(str[index] == '-' || str[index] == '+')
+                index++;
+            if(str[index] == '0' && (str[index + 1] == 'b' || str[index + 1] == 'B'))
+                return true;
+            return false;
+        }
+
         private static void ConvertAllToInt(List<StringBuilder> list) {
             for(int i = 0; i < list.Count; i++) {
-                int length = list[i].Length;
-                if(length > 2) {
-                    if(list[i][0] == '0' && (list[i][1] == 'x' || list[i][1] == 'X'))
+                if(list[i].Length > 2) {
+                    if(IsHexNumber(list[i]))
                         list[i] = new StringBuilder().Append(HexToInt(list[i].ToString()));
-                    else if(length == 3 && list[i][0] == '\'' && list[i][2] == '\'')
-                        list[i] = new StringBuilder().Append((int)list[i][1]);
-                    else if(list[i][0] == '0' && (list[i][1] == 'b' || list[i][1] == 'B')) {
-                        ulong value = 0;
-                        for(int j = 2; j < length; j++) {
-                            value <<= 1;
-                            if(list[i][j] == '1')
-                                value |= 1;
-                            else if(list[i][j] != '0')
-                                throw new Exception();
-                        }
-                        list[i] = new StringBuilder().Append(value.ToString());
+                    else if(IsCharacter(list[i])) {
+                        if(list[i][0] != '\'')
+                            list[i] = new StringBuilder().Append(-(int)list[i][2]);
+                        else
+                            list[i] = new StringBuilder().Append((int)list[i][1]);
                     }
+                    else if(IsBinNumber(list[i]))
+                        list[i] = new StringBuilder().Append(BinToInt(list[i].ToString()).ToString());
                 }
-                if(length >= 3) {
+                if(list[i].Length >= 3) {
                     char c = '0';
                     decimal value = 0;
                     string str = list[i].ToString();
@@ -523,7 +567,7 @@ namespace Bits {
                         continue;
                     }
                 }
-                if(length >= 2) {
+                if(list[i].Length >= 2) {
                     char c = '0';
                     decimal value = 0;
                     string str = list[i].ToString();
