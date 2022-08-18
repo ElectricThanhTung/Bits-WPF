@@ -9,7 +9,7 @@
   <Identity
     Name="3130ElectricThanhTung.Bits-CalculatorForProgrammer"
     Publisher="CN=B4E32ED1-3C4A-43D3-8B23-275E328A3CBB"
-    Version="1.0.0.0" />
+    Version="1.2.1.0" />
 
   <Properties>
     <DisplayName>Bits - Calculator For Programmers</DisplayName>
