@@ -10,23 +10,43 @@ namespace Bits {
         private static NumberFormatInfo provider = new NumberFormatInfo();
 
         public static long HexToInt(string hex) {
-            string temp = "";
+            int index = 0;
+            long value = 0;
+
             hex = hex.ToUpper().Replace("0X", "");
-            for(int i = 0; i < hex.Length; i++) {
-                temp += hex[i];
-                if(i != (hex.Length - 1))
-                    temp += ",";
+
+            if(hex[0] == '-' || hex[0] == '+')
+                index++;
+
+            for(int i = index; i < hex.Length; i++) {
+                value <<= 4;
+                if(hex[i] >= '0' && hex[i] <= '9')
+                    value |= (long)(hex[i] - '0');
+                else if(hex[i] >= 'A' && hex[i] <= 'F')
+                    value |= (long)(hex[i] - 'A' + 10);
+                else
+                    throw new Exception("Invalid hex number format");
             }
-            string hexchar = "ABCDEF";
-            for(int i = 0; i < hexchar.Length; i++)
-                temp = temp.Replace(hexchar[i] + "", (i + 10) + "");
-            string[] s = temp.Split(',');
-            long res = 0;
-            for(int i = 0; i < s.Length; i++) {
-                res *= 16;
-                res += Convert.ToInt16(s[i], provider);
+            if(hex[0] == '-')
+                return -value;
+            return value;
+        }
+
+        public static long BinToInt(string bin) {
+            long value = 0;
+            int index = 2;
+            if(bin[0] == '-' || bin[0] == '+')
+                index++;
+            for(int j = index; j < bin.Length; j++) {
+                value <<= 1;
+                if(bin[j] == '1')
+                    value |= 1;
+                else if(bin[j] != '0')
+                    throw new Exception("Invalid bin number format");
             }
-            return res;
+            if(bin[0] == '-')
+                return -value;
+            return value;
         }
 
         public static string IntToHex(ulong num) {
@@ -53,240 +73,128 @@ namespace Bits {
         }
 
         private static StringBuilder Upper(StringBuilder expression, string str) {
-            str = str.ToLower();
-            int len = str.Length;
-            string[] keyword = new string[(int)Math.Pow(2, len) - 1];
-            for(int i = 0; i < keyword.Length; i++) {
-                string temp = "";
-                for(int j = 0; j < len; j++) {
-                    if((i & (0x01 << j)) > 0) {
-                        if((str[len - j - 1] >= 'a') && (str[len - j - 1] <= 'z'))
-                            temp = (char)(str[len - j - 1] - ('a' - 'A')) + temp;
-                        else
-                            temp = str[len - j - 1] + temp;
-                    }
-                    else
-                        temp = str[len - j - 1] + temp;
-                }
-                keyword[i] = temp;
-            }
-            str = str.ToUpper();
-            for(int i = 0; i < str.Length; i++)
-                expression = expression.Replace(keyword[i], str);
-            return expression;
+            return new StringBuilder(Upper(expression.ToString(), str));
         }
 
         private static string Upper(string expression, string str) {
             str = str.ToLower();
-            int len = str.Length;
-            string[] keyword = new string[(int)Math.Pow(2, len) - 1];
-            for(int i = 0; i < keyword.Length; i++) {
-                string temp = "";
-                for(int j = 0; j < len; j++) {
-                    if((i & (0x01 << j)) > 0) {
-                        if((str[len - j - 1] >= 'a') && (str[len - j - 1] <= 'z'))
-                            temp = (char)(str[len - j - 1] - ('a' - 'A')) + temp;
-                        else
-                            temp = str[len - j - 1] + temp;
+            string patten = "";
+            for(int i = 0; i < str.Length; i++)
+                patten += "[" + str[i] + (char)(str[i] - 32) + "]";
+            patten += @" *\(";
+            str = str.ToUpper();
+            foreach(Match match in Regex.Matches(expression, patten))
+                expression = expression.Replace(match.Value, str + "(");
+            return expression;
+        }
+
+        private static string? GetContentOfCalculation(string mainExpression, string calculation) {
+            calculation = calculation.ToUpper() + "(";
+            int index = mainExpression.IndexOf(calculation);
+            if(index < 0)
+                return null;
+            string str = mainExpression.Substring(index + calculation.Length);
+            int count = 0;
+            int index_end = -1;
+            for(int i = 0; i < str.Length; i++) {
+                if(str[i] == ')') {
+                    if(count == 0) {
+                        index_end = i;
+                        break;
                     }
                     else
-                        temp = str[len - j - 1] + temp;
+                        count--;
                 }
-                keyword[i] = temp;
+                else if(str[i] == '(')
+                    count++;
             }
-            str = str.ToUpper();
-            for(int i = 0; i < str.Length; i++)
-                expression = expression.Replace(keyword[i], str);
-            return expression;
+            if(index_end < 0)
+                throw new Exception("Invalid expression");
+            return str.Substring(0, index_end);
         }
 
         private static string CalSqrt(string expression) {
             expression = Upper(expression, "sqrt");
-            int index = expression.IndexOf("SQRT(");
-            if(index < 0)
-                return expression;
-            string str = expression.Substring(index + "SQRT(".Length);
-            int count = 0;
-            int index_end = str.Length - 1;
-            for(int i = 0; i < str.Length; i++) {
-                if(str[i] == ')') {
-                    if(count == 0) {
-                        index_end = i;
-                        break;
-                    }
-                    else
-                        count--;
-                }
-                else if(str[i] == '(')
-                    count++;
+            while(true) {
+                string? str = GetContentOfCalculation(expression, "sqrt");
+                if(str == null)
+                    return expression;
+                double res = (double)Decimal(str);
+                res = Math.Sqrt(res);
+                expression = expression.Replace("SQRT(" + str + ")", res + "");
             }
-            str = str.Substring(0, index_end);
-            double res = (double)Decimal(str);
-            res = Math.Sqrt(res);
-            expression = expression.Replace("SQRT(" + str + ")", res + "");
-            return expression;
         }
 
         private static string CalSin(string expression) {
             expression = Upper(expression, "sin");
-            int index = expression.IndexOf("SIN(");
-            if(index < 0)
-                return expression;
-            string str = expression.Substring(index + "SIN(".Length);
-            int count = 0;
-            int index_end = str.Length - 1;
-            for(int i = 0; i < str.Length; i++) {
-                if(str[i] == ')') {
-                    if(count == 0) {
-                        index_end = i;
-                        break;
-                    }
-                    else
-                        count--;
-                }
-                else if(str[i] == '(')
-                    count++;
+            while(true) {
+                string? str = GetContentOfCalculation(expression, "sin");
+                if(str == null)
+                    return expression;
+                double res = (double)Decimal(str);
+                res = Math.Sin(res * Math.PI / 180);
+                expression = expression.Replace("SIN(" + str + ")", res + "");
             }
-            str = str.Substring(0, index_end);
-            double res = (double)Decimal(str);
-            res = Math.Sin(res * Math.PI / 180);
-            expression = expression.Replace("SIN(" + str + ")", res + "");
-            return expression;
         }
 
         private static string CalCos(string expression) {
             expression = Upper(expression, "cos");
-            int index = expression.IndexOf("COS(");
-            if(index < 0)
-                return expression;
-            string str = expression.Substring(index + "COS(".Length);
-            int count = 0;
-            int index_end = str.Length - 1;
-            for(int i = 0; i < str.Length; i++) {
-                if(str[i] == ')') {
-                    if(count == 0) {
-                        index_end = i;
-                        break;
-                    }
-                    else
-                        count--;
-                }
-                else if(str[i] == '(')
-                    count++;
+            while(true) {
+                string? str = GetContentOfCalculation(expression, "cos");
+                if(str == null)
+                    return expression;
+                double res = (double)Decimal(str);
+                res = Math.Cos(res * Math.PI / 180);
+                expression = expression.Replace("COS(" + str + ")", res + "");
             }
-            str = str.Substring(0, index_end);
-            double res = (double)Decimal(str);
-            res = Math.Cos(res * Math.PI / 180);
-            expression = expression.Replace("COS(" + str + ")", res + "");
-            return expression;
         }
 
         private static string CalTan(string expression) {
             expression = Upper(expression, "tan");
-            int index = expression.IndexOf("TAN(");
-            if(index < 0)
-                return expression;
-            string str = expression.Substring(index + "TAN(".Length);
-            int count = 0;
-            int index_end = str.Length - 1;
-            for(int i = 0; i < str.Length; i++) {
-                if(str[i] == ')') {
-                    if(count == 0) {
-                        index_end = i;
-                        break;
-                    }
-                    else
-                        count--;
-                }
-                else if(str[i] == '(')
-                    count++;
+            while(true) {
+                string? str = GetContentOfCalculation(expression, "tan");
+                if(str == null)
+                    return expression;
+                double res = (double)Decimal(str);
+                res = Math.Tan(res * Math.PI / 180);
+                expression = expression.Replace("TAN(" + str + ")", res + "");
             }
-            str = str.Substring(0, index_end);
-            double res = (double)Decimal(str);
-            res = Math.Tan(res * Math.PI / 180);
-            expression = expression.Replace("TAN(" + str + ")", res + "");
-            return expression;
         }
 
         private static string CalCot(string expression) {
             expression = Upper(expression, "cot");
-            int index = expression.IndexOf("COT(");
-            if(index < 0)
-                return expression;
-            string str = expression.Substring(index + "COT(".Length);
-            int count = 0;
-            int index_end = str.Length - 1;
-            for(int i = 0; i < str.Length; i++) {
-                if(str[i] == ')') {
-                    if(count == 0) {
-                        index_end = i;
-                        break;
-                    }
-                    else
-                        count--;
-                }
-                else if(str[i] == '(')
-                    count++;
+            while(true) {
+                string? str = GetContentOfCalculation(expression, "cot");
+                if(str == null)
+                    return expression;
+                double res = (double)Decimal(str);
+                res = 1 / Math.Tan(res * Math.PI / 180);
+                expression = expression.Replace("COT(" + str + ")", res + "");
             }
-            str = str.Substring(0, index_end);
-            double res = (double)Decimal(str);
-            res = 1 / Math.Tan(res * Math.PI / 180);
-            expression = expression.Replace("COT(" + str + ")", res + "");
-            return expression;
         }
 
         private static string CalLog10(string expression) {
             expression = Upper(expression, "log");
-            int index = expression.IndexOf("LOG(");
-            if(index < 0)
-                return expression;
-            string str = expression.Substring(index + "LOG(".Length);
-            int count = 0;
-            int index_end = str.Length - 1;
-            for(int i = 0; i < str.Length; i++) {
-                if(str[i] == ')') {
-                    if(count == 0) {
-                        index_end = i;
-                        break;
-                    }
-                    else
-                        count--;
-                }
-                else if(str[i] == '(')
-                    count++;
+            while(true) {
+                string? str = GetContentOfCalculation(expression, "log");
+                if(str == null)
+                    return expression;
+                double res = (double)Decimal(str);
+                res = Math.Log10(res);
+                expression = expression.Replace("LOG(" + str + ")", res + "");
             }
-            str = str.Substring(0, index_end);
-            double res = (double)Decimal(str);
-            res = Math.Log10(res);
-            expression = expression.Replace("LOG(" + str + ")", res + "");
-            return expression;
         }
 
         private static string CalLn(string expression) {
             expression = Upper(expression, "ln");
-            int index = expression.IndexOf("LN(");
-            if(index < 0)
-                return expression;
-            string str = expression.Substring(index + "LN(".Length);
-            int count = 0;
-            int index_end = str.Length - 1;
-            for(int i = 0; i < str.Length; i++) {
-                if(str[i] == ')') {
-                    if(count == 0) {
-                        index_end = i;
-                        break;
-                    }
-                    else
-                        count--;
-                }
-                else if(str[i] == '(')
-                    count++;
+            while(true) {
+                string? str = GetContentOfCalculation(expression, "ln");
+                if(str == null)
+                    return expression;
+                double res = (double)Decimal(str);
+                res = Math.Log(res, Math.E);
+                expression = expression.Replace("LN(" + str + ")", res + "");
             }
-            str = str.Substring(0, index_end);
-            double res = (double)Decimal(str);
-            res = Math.Log(res, Math.E);
-            expression = expression.Replace("LN(" + str + ")", res + "");
-            return expression;
         }
 
         private static decimal CalFactorial(long value) {
@@ -479,27 +387,51 @@ namespace Bits {
             return ret;
         }
 
+        private static bool IsHexNumber(StringBuilder str) {
+            int index = 0;
+            if(str[index] == '-' || str[index] == '+')
+                index++;
+            if(str[index] == '0' && (str[index + 1] == 'x' || str[index + 1] == 'X'))
+                return true;
+            return false;
+        }
+
+        private static bool IsCharacter(StringBuilder str) {
+            int index = 0;
+            int length = 3;
+            if(str[index] == '-' || str[index] == '+') {
+                index++;
+                length++;
+            }
+            if(str.Length == length && str[index] == '\'' && str[index + 2] == '\'')
+                return true;
+            return false;
+        }
+
+        private static bool IsBinNumber(StringBuilder str) {
+            int index = 0;
+            if(str[index] == '-' || str[index] == '+')
+                index++;
+            if(str[index] == '0' && (str[index + 1] == 'b' || str[index + 1] == 'B'))
+                return true;
+            return false;
+        }
+
         private static void ConvertAllToInt(List<StringBuilder> list) {
             for(int i = 0; i < list.Count; i++) {
-                int length = list[i].Length;
-                if(length > 2) {
-                    if(list[i][0] == '0' && (list[i][1] == 'x' || list[i][1] == 'X'))
+                if(list[i].Length > 2) {
+                    if(IsHexNumber(list[i]))
                         list[i] = new StringBuilder().Append(HexToInt(list[i].ToString()));
-                    else if(length == 3 && list[i][0] == '\'' && list[i][2] == '\'')
-                        list[i] = new StringBuilder().Append((int)list[i][1]);
-                    else if(list[i][0] == '0' && (list[i][1] == 'b' || list[i][1] == 'B')) {
-                        ulong value = 0;
-                        for(int j = 2; j < length; j++) {
-                            value <<= 1;
-                            if(list[i][j] == '1')
-                                value |= 1;
-                            else if(list[i][j] != '0')
-                                throw new Exception();
-                        }
-                        list[i] = new StringBuilder().Append(value.ToString());
+                    else if(IsCharacter(list[i])) {
+                        if(list[i][0] != '\'')
+                            list[i] = new StringBuilder().Append(-(int)list[i][2]);
+                        else
+                            list[i] = new StringBuilder().Append((int)list[i][1]);
                     }
+                    else if(IsBinNumber(list[i]))
+                        list[i] = new StringBuilder().Append(BinToInt(list[i].ToString()).ToString());
                 }
-                if(length >= 3) {
+                if(list[i].Length >= 3) {
                     char c = '0';
                     decimal value = 0;
                     string str = list[i].ToString();
@@ -523,7 +455,7 @@ namespace Bits {
                         continue;
                     }
                 }
-                if(length >= 2) {
+                if(list[i].Length >= 2) {
                     char c = '0';
                     decimal value = 0;
                     string str = list[i].ToString();
